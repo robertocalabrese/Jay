@@ -142,4 +142,23 @@ set ::SVG(warning)  [image create photo  -format [list svg -scale 1.5] \
 package provide Jay  $::JAY_VERSION
 namespace eval ::Jay {}
 
+## init
+#
+# Initialize Jay.
+#
+# It doesn't return anything.
+proc ::Jay::init {} {
+    # Set the actual internal name of the application.
+    tk appname [string tolower $::APP_NAME]
+
+    # Hide the initial toplevel created by Tk.
+    wm withdraw .
+}
+
+# Start Jay.
+::Jay::init
+
+# Remove all the Jay procedures that are not needed anymore.
+rename ::Jay::init ""
+
 #*EOF*
