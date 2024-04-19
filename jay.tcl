@@ -556,6 +556,66 @@ proc ::Jay::init {} {
     set ::JAY_PREFERENCE_FILE [file join $::CONFIG_DIR Jay [string cat jay $config_version .conf]]
 }
 
+
+
+######################################################################
+## The following procedures will be defined in the global namespace ##
+######################################################################
+
+# Note:  Each proc name will always start with the underline character.
+#        Each word after the underline must be all in capital letters and
+#        their last characters should also be the underline character,
+#        unless they are the last words of the proc names.
+#
+#        Each of these procedures are independant. They do their stuff in 'house'.
+#        You may consider them as the smallest bricks in Jay.
+#
+#        The developer may use these procedures as he/she may see fit.
+#        Be careful if you edit them though, they are all used by Jay.
+
+
+
+## _CENTER_ON_THE_SCREEN
+#
+# Center the window on the screen.
+#
+# Where:
+#
+# w         Should be the window address (a toplevel address) to be centered.
+#
+# Note:     This procedure is for internal use only and was not crafted to be used by the Developer directly.
+#
+# It doesn't return anything.
+proc ::_CENTER_ON_THE_SCREEN { w } {
+    update
+
+    # Get the window top-left corner position.
+    set width        [winfo width        $w]
+    set height       [winfo height       $w]
+
+    # Get the screen dimension.
+    set screenwidth  [winfo screenwidth  $w]
+    set screenheight [winfo screenheight $w]
+
+    # Center the window on the screen.
+    set x [expr { int(ceil(($screenwidth-$width)*0.5))   }]
+    set y [expr { int(ceil(($screenheight-$height)*0.5)) }]
+
+    # Safeguards.
+    if { $x < 0 } {
+        set x     0
+        set width $screenwidth
+    }
+
+    if { $y < 0 } {
+        set y      0
+        set height $screenheight
+    }
+
+    # Center the window on the screen.
+    wm geometry $w [string cat $width "x" $height "+" $x "+" "$y"]
+}
+
 # Start Jay.
 ::Jay::init
 
