@@ -35,4 +35,41 @@ switch -glob -- [file tail $executable_path] {
     }
 }
 
+# Load the application info.
+try {
+    open [file join $::JAY_DIR "app.txt"] r
+} on error {} {
+    set ::APP_NAME          Jay
+    set ::APP_PRETTYNAME    "Jay $::JAY_VERSION"
+    set ::APP_VERSION       $::JAY_VERSION
+} on ok { channel } {
+    # Read the entire file.
+    set file_content [split [read $channel] "\n"]
+    close $channel
+
+    # Scan the file content line by line.
+    set ::APP_NAME          Jay
+    set ::APP_PRETTYNAME    "Jay $::JAY_VERSION"
+    set ::APP_VERSION       $::JAY_VERSION
+    foreach line $file_content {
+        # Skip any empty or commented lines.
+        switch -- [string index [string trim $line] 0] {
+            "#"     -
+            ""      { continue }
+            default {
+                # Check if the line starts with:
+                #   'APP_NAME:'
+                #   'APP_PRETTYNAME:'
+                #   'APP_VERSION:'
+                # If not, skip the line.
+                switch -nocase -- [lindex $line 0] {
+                    "APP_NAME:"       { set ::APP_NAME       [string trim [lindex $line 1] \"] }
+                    "APP_PRETTYNAME:" { set ::APP_PRETTYNAME [string trim [lindex $line 1] \"] }
+                    "APP_VERSION:"    { set ::APP_VERSION    [string trim [lindex $line 1] \"] }
+                }
+            }
+        }
+    }
+}
+
 #*EOF*
