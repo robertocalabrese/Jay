@@ -616,6 +616,343 @@ proc ::_CENTER_ON_THE_SCREEN { w } {
     wm geometry $w [string cat $width "x" $height "+" $x "+" "$y"]
 }
 
+## _CHECK_COLOR
+#
+# Validates a color in hexadecimal or textual form.
+#
+# Where:
+#
+# color         Should be the color to validate, expressed in textual form (like red, green, blue, purple, orange,...),
+#               in hexadecimal form (at 8, 12 or 16 bits, with or without the '#') or as a system color name.
+#               See the 'Palettes' manual page to know which colornames and system color names are allowed.
+#               Alpha channels (trasparency) are supported only in hexadecimal form.
+#
+# args          Optional. Should be a list of option/value pair.
+#               Allowed options are:
+#
+#                   depth         Should be an integer value indicating the bit depth in which the color should be validated.
+#
+#                                 Allowed values are:
+#                                     8   --> Both colornames and hexadecimal colors will be evaluated as 8 bit.
+#                                             Shortforms will be translated in their longform equivalent at 8 bit depth.
+#
+#                                     12  --> Both colornames and hexadecimal colors will be evaluated as 12 bit.
+#                                             Shortforms will be translated in their longform equivalent at 12 bit depth.
+#
+#                                     16  --> Both colornames and hexadecimal colors will be evaluated as 16 bit.
+#                                             Shortforms will be translated in their longform equivalent at 16 bit depth.
+#
+#                                 If not provided, defaults to the current '::DEPTH' value.
+#
+#                   fallback      Should be the fallback value to return if the color is invalid.
+#
+#                                 If not provided, defaults to 'INVALID'.
+#
+#                   palette       Should be the name of a valid color palette or the word 'ON_ALL_PALETTES' to search
+#                                 the color provided on all palettes known by Jay.
+#                                 See the 'Palettes' manual page to know which palettes names are allowed.
+#
+#                                 Note:  It's only meaningfull if colors are expressed in textual forms.
+#
+#                                 Note:  Palette's names are case sensitive.
+#
+#                                 If not provided defaults to 'ON_ALL_PALETTES'.
+#
+#               Unknown or wrong options will be ignored.
+#
+# Returns the checked color (in its longform, with or without the alpha channel) or the fallback value.
+proc ::_CHECK_COLOR { color args } {
+    set depth     $::DEPTH
+    set fallback  INVALID
+    set palette   ON_ALL_PALETTES
+
+    # Checks that 'args' is a valid option/value list.
+    switch -- [expr { [llength $args]%2 }] {
+        0   {
+            # Removes any duplicate options, retains the last one.
+            set args [lsort -stride 2 -index 0 -unique $args]
+
+            # Checks the options provided.
+            foreach { option value } $args {
+                # Ignore unknown or wrong options.
+                switch -nocase -- $option {
+                    -depth {
+                        switch -- $value {
+                            8   -
+                            12  -
+                            16  { set depth  $value }
+                        }
+                    }
+                    -fallback { set fallback $value }
+                    -palette  {
+                        switch -- $value {
+                            "ON_ALL_PALETTES" {}
+                            default {
+                                if { $value in $::PALETTES } {
+                                    set palette $value
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    # Perform a complex validation.
+    #   Check if the color provided is a valid hexadecimal value.
+    #       If it is    --> Check if it's a valid color value (in short or longform).
+    #       If it's not --> Check if it's a known colorname for the palette provided.
+    #   Return the color longform if it's a valid color, or the fallback value if it's not.
+    set color [string trimleft $color "#"]
+    switch -- $depth {
+        8   {
+            switch -- [string is xdigit -strict $color] {
+                0   {
+                    # Check if it's a system color.
+                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
+                    switch -- $index {
+                        -1      {}
+                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
+                    }
+
+                    switch -- $palette {
+                        ON_ALL_PALETTES {
+                            # Check inside all the registered palettes.
+                            foreach palette $::PALETTES {
+                                set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                                set index [lsearch -exact -nocase $colornames $color]
+                                switch -- $index {
+                                    -1      { continue }
+                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 8] }
+                                }
+                            }
+
+                            return $fallback
+                        }
+                        default {
+                            # Check inside the palette provided.
+                            set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                            set index [lsearch -exact -nocase $colornames $color]
+                            switch -- $index {
+                                -1      { return $fallback }
+                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 8] }
+                            }
+                        }
+                    }
+                }
+                1   {
+                    switch -- [string length $color] {
+                        3   {
+                            # It's a valid hexadecimal shortform value (without its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+
+                            # Translate the color in its longform at 8 bits.
+                            return [string cat "#" \
+                                               $red   $red \
+                                               $green $green \
+                                               $blue  $blue];
+                        }
+                        4   {
+                            # It's a valid hexadecimal shortform value (with its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+                            set alfa  [string index $color 3]
+
+                            # Translate the color in its longform at 8 bits.
+                            return [string cat "#" \
+                                               $red   $red \
+                                               $green $green \
+                                               $blue  $blue \
+                                               $alpha $alpha];
+                        }
+                        6   {
+                            # It's a valid hexadecimal longform value at 8 bits (without its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        8   {
+                            # It's a valid hexadecimal longform value at 8 bits (with its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        default {
+                            # It's an invalid hexadecimal value.
+                            return $fallback
+                        }
+                    }
+                }
+            }
+        }
+        12  {
+            switch -- [string is xdigit -strict $color] {
+                0   {
+                    # Check if it's a system color.
+                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
+                    switch -- $index {
+                        -1      {}
+                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
+                    }
+
+                    switch -- $palette {
+                        ON_ALL_PALETTES {
+                            # Check inside all the registered palettes.
+                            foreach palette $::PALETTES {
+                                set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                                set index [lsearch -exact -nocase $colornames $color]
+                                switch -- $index {
+                                    -1      { continue }
+                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 12] }
+                                }
+                            }
+
+                            return $fallback
+                        }
+                        default {
+                            # Check inside the palette provided.
+                            set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                            set index [lsearch -exact -nocase $colornames $color]
+                            switch -- $index {
+                                -1      { return $fallback }
+                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 12] }
+                            }
+                        }
+                    }
+                }
+                1   {
+                    switch -- [string length $color] {
+                        3   {
+                            # It's a valid hexadecimal shortform value (without its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+
+                            # Translate the color in its longform at 12 bits.
+                            return [string cat "#" \
+                                               $red   $red   $red \
+                                               $green $green $green \
+                                               $blue  $blue  $blue];
+                        }
+                        4   {
+                            # It's a valid hexadecimal shortform value (with its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+                            set alfa  [string index $color 3]
+
+                            # Translate the color in its longform at 12 bits.
+                            return [string cat "#" \
+                                               $red   $red   $red \
+                                               $green $green $green \
+                                               $blue  $blue  $blue \
+                                               $alpha $alpha $alpha];
+                        }
+                        9   {
+                            # It's a valid hexadecimal longform value at 12 bits(without its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        12  {
+                            # It's a valid hexadecimal longform value at 12 bits(with its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        default {
+                            # It's an invalid hexadecimal value.
+                            return $fallback
+                        }
+                    }
+                }
+            }
+        }
+        16  {
+            switch -- [string is xdigit -strict $color] {
+                0   {
+                    # Check if it's a system color.
+                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
+                    switch -- $index {
+                        -1      {}
+                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
+                    }
+
+                    switch -- $palette {
+                        ON_ALL_PALETTES {
+                            # Check inside all the registered palettes.
+                            foreach palette $::PALETTES {
+                                set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                                set index [lsearch -exact -nocase $colornames $color]
+                                switch -- $index {
+                                    -1      { continue }
+                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 16] }
+                                }
+                            }
+
+                            return $fallback
+                        }
+                        default {
+                            # Check inside the palette provided.
+                            set colornames [dict get $::TABLE(palette,$palette) family all]
+
+                            set index [lsearch -exact -nocase $colornames $color]
+                            switch -- $index {
+                                -1      { return $fallback }
+                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 16] }
+                            }
+                        }
+                    }
+                }
+                1   {
+                    switch -- [string length $color] {
+                        3   {
+                            # It's a valid hexadecimal shortform value (without its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+
+                            # Translate the color in its longform at 16 bits.
+                            return [string cat "#" \
+                                               $red   $red   $red   $red \
+                                               $green $green $green $green \
+                                               $blue  $blue  $blue  $blue];
+
+                        }
+                        4   {
+                            # It's a valid hexadecimal shortform value (with its alpha channel).
+                            set red   [string index $color 0]
+                            set green [string index $color 1]
+                            set blue  [string index $color 2]
+                            set alfa  [string index $color 3]
+
+                            # Translate the color in its longform at 16 bits.
+                            return [string cat "#" \
+                                               $red   $red   $red   $red \
+                                               $green $green $green $green \
+                                               $blue  $blue  $blue  $blue \
+                                               $alpha $alpha $alpha $alpha];
+                        }
+                        12  {
+                            # It's a valid hexadecimal longform value at 16 bits (without its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        16  {
+                            # It's a valid hexadecimal longform value at 16 bits (with its alpha channel).
+                            return [string cat "#" $color]
+                        }
+                        default {
+                            # It's an invalid hexadecimal value.
+                            return $fallback
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 # Start Jay.
 ::Jay::init
 
