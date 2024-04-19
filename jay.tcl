@@ -1009,6 +1009,153 @@ proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
     }
 }
 
+## _CONVERT_MEASURE
+#
+# Convert a measure.
+#
+# Where:
+#
+# from          Should be the measure to convert.
+#               Allowed units are:
+#                   p --> points,
+#                   i --> inches,
+#                   c --> centimeters,
+#                   m --> millimeters.
+#               If there is no unit, the measure will be assumed to be pixels.
+#
+# args          Optional. Should be a list of option/value pair.
+#               Allowed options are:
+#
+#                   to        Should be the unit in which the result needs to be expressed.
+#                             Allowed values:
+#                                 p --> points,
+#                                 i --> inches,
+#                                 c --> centimeters,
+#                                 m --> millimeters.
+#                             If not provided or provided as an empty string, the unit will be assumed to be pixels.
+#
+#                   fallback  Should be the fallback value to return if the measure is invalid.
+#
+# Note:         2.54/72.0 = 0.035277777777777776
+#               25.4/72.0 = 0.35277777777777775
+#               72.0/2.54 = 28.346456692913385
+#               72.0/25.4 = 2.834645669291339
+#               1/72.0    = 0.013888888888888888
+#               1/2.54    = 0.39370078740157477
+#               1/25.4    = 0.03937007874015748
+#
+# Returns the converted measure or the fallback value.
+proc ::_CONVERT_MEASURE { measure args } {
+    set fallback  INVALID
+    set to_unit   ""
+
+    # Checks that 'args' is a valid option/value list.
+    switch -- [expr { [llength $args]%2 }] {
+        0   {
+            # Removes any duplicate options, retains the last one.
+            set args [lsort -stride 2 -index 0 -unique $args]
+
+            # Checks the options provided.
+            foreach { option value } $args {
+                # Ignore unknown or wrong options.
+                switch -nocase -- $option {
+                    -fallback { set fallback $value }
+                    -to {
+                        switch -- $value {
+                            ""  -
+                            c   -
+                            i   -
+                            m   -
+                            p   { set to_unit $value }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    set from_unit [string index $measure end]
+    switch -- $unit {
+        0   -
+        1   -
+        2   -
+        3   -
+        4   -
+        5   -
+        6   -
+        7   -
+        8   -
+        9   {
+            set from_unit   ""
+            set from_value  $measure
+
+            switch -- [string is integer -strict $from_value] {
+                0   { return $fallback }
+            }
+        }
+        c   -
+        i   -
+        m   -
+        p   {
+            set from_value [string range $measure 0 end-1]
+
+            switch -- [string is double -strict $from_value] {
+                0   { return $fallback }
+            }
+        }
+        default { return $fallback }
+    }
+
+    set tk_scaling [tk scaling]
+    switch -- $from_unit {
+        ""  {
+            switch -- $to_unit {
+                c       { return [string cat [expr { ($from_value/$tk_scaling)*0.035277777777777776 }] "c"] }
+                i       { return [string cat [expr { ($from_value/$tk_scaling)*0.013888888888888888 }] "i"] }
+                m       { return [string cat [expr { ($from_value/$tk_scaling)*0.352777777777777750 }] "m"] }
+                p       { return [string cat [expr { ($from_value/$tk_scaling) }] "p"] }
+                default { return [expr { round($from_value) }] }
+            }
+        }
+        c   {
+            switch -- $to_unit {
+                c       { return [string cat $from_value "c"] }
+                i       { return [string cat [expr { $from_value*0.39370078740157477 }] "i"] }
+                m       { return [string cat [expr { $from_value*10 }] "m"] }
+                p       { return [string cat [expr { $from_value*28.3464566929133850 }] "p"] }
+                default { return [expr { round($from_value*$tk_scaling*28.346456692913385) }] }
+            }
+        }
+        i   {
+            switch -- $to_unit {
+                c       { return [string cat [expr { $from_value*2.54 }] "c"] }
+                i       { return [string cat $from_value "i"] }
+                m       { return [string cat [expr { $from_value*25.4 }] "m"] }
+                p       { return [string cat [expr { $from_value*72.0 }] "p"] }
+                default { return [expr { round($from_value*$tk_scaling*72.0) }] }
+            }
+        }
+        m   {
+            switch -- $to_unit {
+                c       { return [string cat [expr { $from_value*0.1 }] "c"] }
+                i       { return [string cat [expr { $from_value*0.03937007874015748 }] "i"] }
+                m       { return [string cat $from_value "m"] }
+                p       { return [string cat [expr { $from_value*2.83464566929133900 }] "p"] }
+                default { return [expr { round($from_value*$tk_scaling*2.834645669291339) }] }
+            }
+        }
+        p   {
+            switch -- $to_unit {
+                c       { return [string cat [expr { $from_value*0.035277777777777776 }] "c"] }
+                i       { return [string cat [expr { $from_value*0.013888888888888888 }] "i"] }
+                m       { return [string cat [expr { $from_value*0.352777777777777750 }] "m"] }
+                p       { return [string cat $from_value "p"] }
+                default { return [expr { round($from_value*$tk_scaling) }] }
+            }
+        }
+    }
+}
+
 # Start Jay.
 ::Jay::init
 
