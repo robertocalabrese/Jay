@@ -953,6 +953,62 @@ proc ::_CHECK_COLOR { color args } {
     }
 }
 
+## _CHECK_MEASURE
+#
+# Validates a measure.
+#
+# Where:
+#
+# measure       Should be the measure to check.
+#               Allowed units are:
+#                   p --> points,
+#                   i --> inches,
+#                   c --> centimeters,
+#                   m --> millimeters.
+#               If there is no unit the measure will be assumed to be pixels.
+#
+# fallback      Optional. Should be the fallback value to return if the measure is invalid.
+#
+#               If not provided, defaults to 'INVALID'.
+#
+# Returns the checked measure or the fallback value.
+proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
+    set unit [string index $measure end]
+    switch -- $unit {
+        0   -
+        1   -
+        2   -
+        3   -
+        4   -
+        5   -
+        6   -
+        7   -
+        8   -
+        9   {
+            # The measure have no unit, its value is assumed to be in pixels.
+            if { [string is integer -strict $measure] && ( $measure >= 0 ) } {
+                return $measure
+            } else {
+                return $fallback
+            }
+        }
+        c   -
+        i   -
+        m   -
+        p   {
+            # The measure have a valid unit, get it's value.
+            set value [string range $measure 0 end-1]
+
+            if { [string is double -strict $value] && ( $value >= 0 ) } {
+                return [string cat $value $unit]
+            } else {
+                return $fallback
+            }
+        }
+        default { return $fallback }
+    }
+}
+
 # Start Jay.
 ::Jay::init
 
