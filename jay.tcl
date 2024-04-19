@@ -228,6 +228,54 @@ proc ::Jay::init {} {
     #
     # ['+', '-' or 'space']
     set ::UNION "+"
+
+    # Check the windowing system.
+    switch -- [tk windowingsystem] {
+        aqua {
+            # Set the user folders.
+            set ::HOME_DIR   $::env(HOME)
+            set ::CACHE_DIR  [file join $::HOME_DIR Library Caches]
+            set ::CONFIG_DIR [file join $::HOME_DIR Library "Application Support"]
+            set ::DATA_DIR   [file join $::HOME_DIR Library Preferences]
+        }
+        win32 {
+            # Set the system folders.
+            set ::WIN_DISK $::env(SystemDrive)
+            set ::WIN_DIR  $::env(SystemRoot)
+
+            # Set the user folders.
+            set ::HOME_DIR   $::env(HOME)
+            set ::CONFIG_DIR $::env(LOCALAPPDATA)
+            set ::CACHE_DIR  [file join $::CONFIG_DIR cache]
+            set ::DATA_DIR   $::env(APPDATA)
+        }
+        default {
+            # Set the user folders.
+            set ::HOME_DIR $::env(HOME)
+
+            switch -- [info exists ::env(XDG_CACHE_HOME)] {
+                0   { set ::CACHE_DIR [file join $HOME_DIR ".cache"] }
+                1   { set ::CACHE_DIR $::env(XDG_CACHE_HOME) }
+            }
+
+            switch -- [info exists ::env(XDG_CONFIG_HOME)] {
+                0   { set ::CONFIG_DIR [file join $HOME_DIR ".config"] }
+                1   { set ::CONFIG_DIR $::env(XDG_CONFIG_HOME) }
+            }
+
+            switch -- [info exists ::env(XDG_DATA_HOME)] {
+                0   { set ::DATA_DIR [file join $HOME_DIR ".local" share] }
+                1   { set ::DATA_DIR $::env(XDG_DATA_HOME) }
+            }
+        }
+    }
+
+    # Set the Jay preference filepath.
+    set config_version [lindex [split $::JAY_VERSION "."] 0]
+    switch -- $config_version {
+        1   { set config_version "" }
+    }
+    set ::JAY_PREFERENCE_FILE [file join $::CONFIG_DIR Jay [string cat jay $config_version .conf]]
 }
 
 # Start Jay.
