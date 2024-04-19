@@ -575,6 +575,36 @@ proc ::Jay::init {} {
 
 
 
+## _ALIGN_STRING_TO_COLUMN
+#
+# Add spaces dinamically to a string in order to align the next column.
+#
+# Where:
+#
+# string        Should be the string to align.
+#
+# maxLength     Should be a positive integer that specifies the maximum length allowed for the string.
+#
+# gap           Should be a positive integer that specifies the column distancer (in space characters).
+#
+#               If not provided, defaults to '3'.
+#
+# Returns the new aligned string, ready to be used.
+proc ::_ALIGN_STRING_TO_COLUMN { string maxLength { gap 3 } } {
+    if { [string is integer -strict $maxlength] && ( $maxlength > 0 ) } {
+        if { [string is integer -strict $gap] && ( $gap > 0 ) } {
+            set i 0
+            set limit [expr { $maxLength+$gap-[string length $string] }]
+            while { $i < $limit } {
+                append string " "
+                incr i
+            }
+        }
+    }
+
+    return $string
+}
+
 ## _CENTER_ON_THE_SCREEN
 #
 # Center the window on the screen.
