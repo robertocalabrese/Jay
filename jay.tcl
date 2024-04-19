@@ -192,6 +192,30 @@ proc ::Jay::init {} {
     # ['enabled' or 'disabled']
     set ::FOLLOWMOUSE "disabled"
 
+    # Note:  The Jay language packs are defined in the global namespace.
+    #
+    #        App developers that wants that Jay autotranslates their application texts,
+    #        should define their message catalog in the global namespace as well.
+    #
+    #        3rd party package developers should use the widget '-textvariable' option
+    #        instead of the '-text' one, and manage their translation internally.
+
+    # It's a string that specifies the available languages.
+    # It must follow the 'ISO 639-1' specifications.
+    set ::LANGUAGES [list ]
+    foreach path [glob -type f -nocomplain -directory [file join $::JAY_DIR msgs] -- *.msg] {
+        set lang [string tolower [file rootname [file tail $path]]]
+        switch -- $lang {
+            root    { continue }
+            default { lappend ::LANGUAGES $lang }
+        }
+    }
+    ::msgcat::mcload [file join $::JAY_DIR msgs]
+
+    # It's a string that specifies the language in use.
+    # It must follow the 'ISO 639-1' specifications.
+    set ::LANGUAGE [::msgcat::mclocale]
+
     # It's a boolean that specifies the notifications state.
     #
     # ['enabled' or 'disabled']
