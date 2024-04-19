@@ -153,6 +153,81 @@ proc ::Jay::init {} {
 
     # Hide the initial toplevel created by Tk.
     wm withdraw .
+
+    # It's a string that specifies the accent color in use.
+    #
+    # ['blue', 'cyan', 'green', 'orange', 'purple', 'red', 'yellow' or 'custom']
+    set ::ACCENT_COLOR "blue"
+
+    # It's a string that specifies the operating system architecture in use.
+    #
+    # ['32 bit' or '64 bit']
+    switch -- $::tcl_platform(pointerSize) {
+        8   { set ::ARCH "64 bit" }
+        4   { set ::ARCH "32 bit" }
+    }
+
+    # It's a string that specifies the actual CIE standards in use.
+    #
+    # ['standard' or 'intent']
+    set ::CIE "standard"
+
+    # It's a string that specifies the colorscheme in use.
+    #
+    # ['light' or 'dark']
+    set ::COLORSCHEME "light"
+
+    # It's a boolean that specifies the debug state.
+    #
+    # ['enabled' or 'disabled']
+    set ::DEBUG "disabled"
+
+    # It's an integer that specifies the color depth in use.
+    #
+    # ['8', '12' or '16']
+    set ::DEPTH 8
+
+    # It's a boolean that specifies if the focus must follow the pointer or not.
+    #
+    # ['enabled' or 'disabled']
+    set ::FOLLOWMOUSE "disabled"
+
+    # It's a boolean that specifies the notifications state.
+    #
+    # ['enabled' or 'disabled']
+    set ::NOTIFICATIONS "enabled"
+
+    # It's a boolean that specifies the popups state.
+    #
+    # ['enabled' or 'disabled']
+    set ::POPUPS "enabled"
+
+    # It's a floating point that specifies the physical pixels per inch of the
+    # screen in which the application is displayed.
+    set ::SCREEN_PPI [winfo fpixels . 1i]
+
+    # It's a floating point that specifies the scrolling speed value in use.
+    # It will always be interpreted as percentage even without the '%' symbol.
+    #
+    # [1.0,300.0]
+    set ::SCROLLSPEED 50.0
+
+    # It's a string that specifies the Jay initialization state.
+    #
+    # ['ongoing', 'done']
+    set ::TEMP(init,state) ongoing
+
+    # It's a floating point that specifies the UI scale factor in use.
+    # It will always be interpreted as percentage even without the '%' symbol.
+    #
+    # [75.0,300.0]
+    set ::UI_SCALING_FACTOR 100.0
+
+    # It's a character that specifies the union symbol in use inside menus popups
+    # or contextual menus, to indicate shortcuts combos like 'Ctrl+C' for copy.
+    #
+    # ['+', '-' or 'space']
+    set ::UNION "+"
 }
 
 # Start Jay.
