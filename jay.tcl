@@ -72,4 +72,47 @@ try {
     }
 }
 
+# Create the fonts.
+set ::FONT(Monospace,family) [font configure TkFixedFont   -family]
+set ::FONT(Monospace,size)   [font configure TkFixedFont   -size]
+set ::FONT(Monospace,weight) [font configure TkFixedFont   -weight]
+set ::FONT(Monospace,slant)  [font configure TkFixedFont   -slant]
+
+set ::FONT(Normal,family)    [font configure TkDefaultFont -family]
+set ::FONT(Normal,size)      [font configure TkDefaultFont -size]
+set ::FONT(Normal,weight)    [font configure TkDefaultFont -weight]
+set ::FONT(Normal,slant)     [font configure TkDefaultFont -slant]
+
+set ::FONT(Biggest,family)   $::FONT(Normal,family)
+set ::FONT(Biggest,size)     [expr { $::FONT(Normal,size)+2 }]
+set ::FONT(Biggest,weight)   $::FONT(Normal,weight)
+set ::FONT(Biggest,slant)    $::FONT(Normal,slant)
+
+set ::FONT(Bigger,family)    $::FONT(Normal,family)
+set ::FONT(Bigger,size)      [expr { $::FONT(Normal,size)+1 }]
+set ::FONT(Bigger,weight)    $::FONT(Normal,weight)
+set ::FONT(Bigger,slant)     $::FONT(Normal,slant)
+
+set ::FONT(Smaller,family)   $::FONT(Normal,family)
+set ::FONT(Smaller,size)     [expr { $::FONT(Normal,size)-1 }]
+set ::FONT(Smaller,weight)   $::FONT(Normal,weight)
+set ::FONT(Smaller,slant)    $::FONT(Normal,slant)
+
+set ::FONT(Smallest,family)  $::FONT(Normal,family)
+set ::FONT(Smallest,size)    [expr { $::FONT(Normal,size)-2 }]
+set ::FONT(Smallest,weight)  $::FONT(Normal,weight)
+set ::FONT(Smallest,slant)   $::FONT(Normal,slant)
+
+foreach { font name } [list BiggestFont   Biggest \
+                            BiggerFont    Bigger \
+                            NormalFont    Normal \
+                            SmallerFont   Smaller \
+                            SmallestFont  Smallest \
+                            MonospaceFont Monospace] {
+    font create $font -family $::FONT($name,family) \
+                        -size $::FONT($name,size) \
+                      -weight $::FONT($name,weight) \
+                       -slant $::FONT($name,slant);
+}
+
 #*EOF*
