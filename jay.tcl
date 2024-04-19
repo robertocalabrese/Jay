@@ -253,6 +253,9 @@ proc ::Jay::init {} {
     # ['+', '-' or 'space']
     set ::UNION "+"
 
+    # Load the accent colors.
+    source -encoding utf-8 [file join $::JAY_DIR themes "accent_colors.tcl"]
+
     # Check the windowing system.
     switch -- [tk windowingsystem] {
         aqua {
