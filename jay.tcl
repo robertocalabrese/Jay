@@ -267,6 +267,257 @@ proc ::Jay::init {} {
                 0   { set ::DATA_DIR [file join $HOME_DIR ".local" share] }
                 1   { set ::DATA_DIR $::env(XDG_DATA_HOME) }
             }
+
+            # Note: If a config file for 'KDE', 'QT' or 'GTK' is found, adjust the fonts with the one/s specified in it.
+            #       The first valid config file found (with fonts data), will define the fonts.
+            #
+            #       Order: KDE --> QT --> GTK4 --> GTK3 --> GTK2.
+
+            # KDE --> QT
+            set found 0
+            foreach path [list  [file join $::CONFIG_DIR kdeglobals] \
+                                [file join $::CONFIG_DIR "Trolltech.conf"]] {
+                try {
+                    open $path r
+                } on error {} {
+                    continue
+                } on ok { channel } {
+                    # Read the entire file.
+                    set file_content [split [read $channel] "\n"]
+                    close $channel
+
+                    # Scan the file content line by line.
+                    foreach line $file_content {
+                        set line [split $line "="]
+                        # Check if the line starts with:
+                        #   'font'
+                        #   'fixed'
+                        #   'smallestReadableFont'
+                        # If not, skip the line.
+                        switch -- [lindex $line 0] {
+                            font {
+                                # Retrieve the normal font data.
+                                set values [split [lindex $line 1] ","]
+
+                                set ::FONT(Normal,family) [string trim [lindex $values 0]]
+                                set ::FONT(Normal,size)   [string trim [lindex $values 1]]
+
+                                if { [lindex $values 4] > 50 } {
+                                    set ::FONT(Normal,weight) bold
+                                } else {
+                                    set ::FONT(Normal,weight) normal
+                                }
+
+                                switch -- [lindex $values 5] {
+                                    1       { set ::FONT(Normal,slant) italic }
+                                    default { set ::FONT(Normal,slant) roman }
+                                }
+
+                                # Configure the Biggest, Bigger, Smaller and Smallest fonts data.
+                                set ::FONT(Biggest,family)  $::FONT(Normal,family)
+                                set ::FONT(Biggest,size)    [expr { $::FONT(Normal,size)+2 }]
+                                set ::FONT(Biggest,weight)  $::FONT(Normal,weight)
+                                set ::FONT(Biggest,slant)   $::FONT(Normal,slant)
+
+                                set ::FONT(Bigger,family)   $::FONT(Normal,family)
+                                set ::FONT(Bigger,size)     [expr { $::FONT(Normal,size)+1 }]
+                                set ::FONT(Bigger,weight)   $::FONT(Normal,weight)
+                                set ::FONT(Bigger,slant)    $::FONT(Normal,slant)
+
+                                set ::FONT(Smaller,family)  $::FONT(Normal,family)
+                                set ::FONT(Smaller,size)    [expr { $::FONT(Normal,size)-1 }]
+                                set ::FONT(Smaller,weight)  $::FONT(Normal,weight)
+                                set ::FONT(Smaller,slant)   $::FONT(Normal,slant)
+
+                                set ::FONT(Smallest,family) $::FONT(Normal,family)
+                                set ::FONT(Smallest,size)   [expr { $::FONT(Normal,size)-2 }]
+                                set ::FONT(Smallest,weight) $::FONT(Normal,weight)
+                                set ::FONT(Smallest,slant)  $::FONT(Normal,slant)
+
+                                # Configure the fonts.
+                                font configure BiggestFont  -family $::FONT(Biggest,family) \
+                                                              -size $::FONT(Biggest,size) \
+                                                            -weight $::FONT(Biggest,weight) \
+                                                             -slant $::FONT(Biggest,slant);
+
+                                font configure BiggerFont   -family $::FONT(Bigger,family) \
+                                                              -size $::FONT(Bigger,size) \
+                                                            -weight $::FONT(Bigger,weight) \
+                                                             -slant $::FONT(Bigger,slant);
+
+                                font configure NormalFont   -family $::FONT(Normal,family) \
+                                                              -size $::FONT(Normal,size) \
+                                                            -weight $::FONT(Normal,weight) \
+                                                             -slant $::FONT(Normal,slant);
+
+                                font configure SmallerFont  -family $::FONT(Smaller,family) \
+                                                              -size $::FONT(Smaller,size) \
+                                                            -weight $::FONT(Smaller,weight) \
+                                                             -slant $::FONT(Smaller,slant);
+
+                                font configure SmallestFont -family $::FONT(Smallest,family) \
+                                                              -size $::FONT(Smallest,size) \
+                                                            -weight $::FONT(Smallest,weight) \
+                                                             -slant $::FONT(Smallest,slant);
+
+                                incr found
+                            }
+                            fixed {
+                                # Retrieve the monospace font data.
+                                set values [split [lindex $line 1] ","]
+
+                                set ::FONT(Monospace,family) [string trim [lindex $values 0]]
+                                set ::FONT(Monospace,size)   [string trim [lindex $values 1]]
+
+                                if { [lindex $values 4] > 50 } {
+                                    set ::FONT(Monospace,weight) bold
+                                } else {
+                                    set ::FONT(Monospace,weight) normal
+                                }
+
+                                switch -- [lindex $values 5] {
+                                    1       { set ::FONT(Monospace,slant) italic }
+                                    default { set ::FONT(Monospace,slant) roman }
+                                }
+
+                                # Configure the font.
+                                font configure MonospaceFont -family $::FONT(Monospace,family) \
+                                                               -size $::FONT(Monospace,size) \
+                                                             -weight $::FONT(Monospace,weight) \
+                                                              -slant $::FONT(Monospace,slant);
+
+                                incr found
+                            }
+                            smallestReadableFont {
+                                # Retrieve the smallest font data.
+                                set values [split [lindex $line 1] ","]
+
+                                set ::FONT(Smallest,family) [string trim [lindex $values 0]]
+                                set ::FONT(Smallest,size)   [string trim [lindex $values 1]]
+
+                                if { [lindex $values 4] > 50 } {
+                                    set ::FONT(Smallest,weight) bold
+                                } else {
+                                    set ::FONT(Smallest,weight) normal
+                                }
+
+                                switch -- [lindex $values 5] {
+                                    1       { set ::FONT(Smallest,slant) italic }
+                                    default { set ::FONT(Smallest,slant) roman }
+                                }
+
+                                # Configure the font.
+                                font configure SmallestFont -family $::FONT(Smallest,family) \
+                                                              -size $::FONT(Smallest,size) \
+                                                            -weight $::FONT(Smallest,weight) \
+                                                             -slant $::FONT(Smallest,slant);
+
+                                incr found
+                            }
+                        }
+                    }
+                }
+
+                switch -- $found {
+                    0       { continue }
+                    default { break }
+                }
+            }
+
+            switch -- $found {
+                0   {
+                    # GTK4 --> GTK3 --> GTK2
+                    foreach path [list  [file join $::CONFIG_DIR gtk-4.0 "settings.ini"] \
+                                        [file join $::CONFIG_DIR gtk-3.0 "settings.ini"]
+                                        [file join $::HOME_DIR   ".gtkrc-2.0"]] {
+                        try {
+                            open $path r
+                        } on error {} {
+                            continue
+                        } on ok { channel } {
+                            # Read the entire file.
+                            set file_content [split [read $channel] "\n"]
+                            close $channel
+
+                            # Scan the file content line by line.
+                            foreach line $file_content {
+                                set line [split $line "="]
+                                # Check if the line starts with:
+                                #   'gtk-font-name'
+                                # If not, skip the line.
+                                switch -- [lindex $line 0] {
+                                    "gtk-font-name" {
+                                        # Retrieve the normal font data.
+                                        set values [split [lindex $line 1] ","]
+
+                                        set ::FONT(Normal,family)   [string trim [lindex $values 0]]
+                                        set ::FONT(Normal,size)     [string trim [lindex $values 1]]
+
+                                        # Set a fixed value for the normal weight and slant,
+                                        # because the GTK specifications don't have these informations.
+                                        set ::FONT(Normal,weight)   normal
+                                        set ::FONT(Normal,slant)    roman
+
+                                        # Configure the Biggest, Bigger, Smaller and Smallest fonts data.
+                                        set ::FONT(Biggest,family)  $::FONT(Normal,family)
+                                        set ::FONT(Biggest,size)    [expr { $::FONT(Normal,size)+2 }]
+                                        set ::FONT(Biggest,weight)  $::FONT(Normal,weight)
+                                        set ::FONT(Biggest,slant)   $::FONT(Normal,slant)
+
+                                        set ::FONT(Bigger,family)   $::FONT(Normal,family)
+                                        set ::FONT(Bigger,size)     [expr { $::FONT(Normal,size)+1 }]
+                                        set ::FONT(Bigger,weight)   $::FONT(Normal,weight)
+                                        set ::FONT(Bigger,slant)    $::FONT(Normal,slant)
+
+                                        set ::FONT(Smaller,family)  $::FONT(Normal,family)
+                                        set ::FONT(Smaller,size)    [expr { $::FONT(Normal,size)-1 }]
+                                        set ::FONT(Smaller,weight)  $::FONT(Normal,weight)
+                                        set ::FONT(Smaller,slant)   $::FONT(Normal,slant)
+
+                                        set ::FONT(Smallest,family) $::FONT(Normal,family)
+                                        set ::FONT(Smallest,size)   [expr { $::FONT(Normal,size)-2 }]
+                                        set ::FONT(Smallest,weight) $::FONT(Normal,weight)
+                                        set ::FONT(Smallest,slant)  $::FONT(Normal,slant)
+
+                                        # Configure the fonts.
+                                        font configure BiggestFont  -family $::FONT(Biggest,family) \
+                                                                      -size $::FONT(Biggest,size) \
+                                                                    -weight $::FONT(Biggest,weight) \
+                                                                     -slant $::FONT(Biggest,slant);
+
+                                        font configure BiggerFont   -family $::FONT(Bigger,family) \
+                                                                      -size $::FONT(Bigger,size) \
+                                                                    -weight $::FONT(Bigger,weight) \
+                                                                     -slant $::FONT(Bigger,slant);
+
+                                        font configure NormalFont   -family $::FONT(Normal,family) \
+                                                                      -size $::FONT(Normal,size) \
+                                                                    -weight $::FONT(Normal,weight) \
+                                                                     -slant $::FONT(Normal,slant);
+
+                                        font configure SmallerFont  -family $::FONT(Smaller,family) \
+                                                                      -size $::FONT(Smaller,size) \
+                                                                    -weight $::FONT(Smaller,weight) \
+                                                                     -slant $::FONT(Smaller,slant);
+
+                                        font configure SmallestFont -family $::FONT(Smallest,family) \
+                                                                      -size $::FONT(Smallest,size) \
+                                                                    -weight $::FONT(Smallest,weight) \
+                                                                     -slant $::FONT(Smallest,slant);
+
+                                        incr found
+                                    }
+                                }
+                            }
+
+                            switch -- $found {
+                                0       { continue }
+                                default { break }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
