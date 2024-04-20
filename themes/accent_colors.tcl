@@ -6,6 +6,7 @@
 #        Hover     --> The hover state color.
 #        Focus     --> The focus state color.
 #        Selected  --> The selected state color.
+#        Invalid   --> The invalid state color.
 #        Secondary --> A secondary/alternate color.
 
 # Accent                           Pressed   Hover     Focus     Selected  Invalid   Secondary
