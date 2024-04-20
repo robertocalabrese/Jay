@@ -1186,6 +1186,311 @@ proc ::_CONVERT_MEASURE { measure args } {
     }
 }
 
+## _FATAL_ERROR
+#
+# Display the fatal error window and exits.
+#
+# Where:
+#
+# message       Should be a list that specifies the error message to display.
+#               The message will be auto translated, if possible.
+#               In order to do so, two things are required:
+#                     1 - The text string should be provided in english ('en').
+#
+#                         If presents, each of the substitution strings will substitute a single '%s',
+#                         and their numbers depends on how many '%s' are contained in the text string itself.
+#
+#                         Note1:  If there are no '%s' in the text string then there's no need to provide any substitution strings.
+#                         Note2:  Each substitution string will be used verbatim (no translation will be performed on them).
+#
+#                         Example1: No substitution string
+#
+#                                 ::_FATAL_ERROR [list "Settings:"]    or just     ::_FATAL_ERROR "Settings:"
+#
+#                         Example2: One substitution string
+#
+#                                 ::_FATAL_ERROR [list "The %s command is invalid." grid]
+#
+#                         Example3: Two substitution strings
+#
+#                                 ::_FATAL_ERROR [list "The %s command address is invalid: '%s'" grid .myapp]
+#
+#                         ...
+#
+#                     2 - A message catalog should be provided with all the translations needed by the application.
+#                         Each language file should have its translation defined in the global namespace.
+#
+#              If both these requirements are satisfied, a translation will be performed,
+#              otherwise the message provided will be used verbatim.
+#
+# It will exit from the application after the user closes the window.
+proc ::_FATAL_ERROR { message } {
+    unset -nocomplain -- ::TEMP(response)
+
+    # Check if Jay is fully initialized ('done') or not ('ongoing').
+    switch -- $::TEMP(init,state) {
+        done {
+            # Note:  Jay is allready initialized, we can safely use it's widgets.
+
+            # Note:  To be done.
+            #        As a fallback the message provided will be displayed in the standard output channel.
+            #        No translation or substitutions will be done atm.
+            puts stdout "Error: [lindex $message 0]"
+            exit 1
+        }
+        default {
+            # Note:  Jay is not fully initialized yet, we will fallback to use the Tk widgets.
+
+            # Set the light colorscheme.
+            switch -- [tk windowingsystem] {
+                aqua {
+                    set background #eff0f1
+                    set btn_bg     #e5e5e6
+                }
+                win32 {
+                    set background #fefefe
+                    set btn_bg     #f0f0f0
+                }
+                default {
+                    set background #eff0f1
+                    set btn_bg     #e5e5e6
+                }
+            }
+            set bordercolor #a4a6a8
+            set foreground  #1f1c1b
+
+            # Retrieve the current accent colors that we need.
+            set focus   [lindex $::THEME(accent,$::ACCENT_COLOR) 2]
+            set hover   [lindex $::THEME(accent,$::ACCENT_COLOR) 1]
+            set pressed [lindex $::THEME(accent,$::ACCENT_COLOR) 0]
+
+            # Configure the theme styles.
+            ::ttk::style theme use clam
+
+            ::ttk::style layout TButton {
+                Button.border -sticky nswe -border 2 -children {
+                    Button.padding -sticky nswe -children {
+                        Button.label -sticky nswe
+                    }
+                }
+            }
+
+            ::ttk::style configure TButton      -background $btn_bg \
+                                               -bordercolor $bordercolor \
+                                               -borderwidth 2 \
+                                                      -font SmallerFont \
+                                                -foreground $foreground \
+                                                    -relief solid;
+
+            ::ttk::style map TButton            -background [list pressed $pressed \
+                                                                    hover $hover \
+                                                                    focus $focus] \
+                                               -bordercolor [list pressed $pressed \
+                                                                    hover $hover \
+                                                                    focus $focus] \
+                                                -foreground [list pressed $background];
+
+            ::ttk::style configure TFrame       -background $background \
+                                                    -relief flat;
+
+            ::ttk::style configure TLabel       -background $background \
+                                                -foreground $foreground;
+
+            ::ttk::style configure TSeparator   -background $background
+
+            # Create the toplevel.
+            set ATTRIBUTES       [list         -topmost 1]
+
+            set TOPLEVEL_OPTIONS [list      -background $background \
+                                                 -class Toplevel \
+                                              -colormap "" \
+                                             -container 0 \
+                                                -cursor "" \
+                                   -highlightbackground $background \
+                                        -highlightcolor $background \
+                                    -highlightthickness 0 \
+                                                  -menu "" \
+                                                  -padx 0 \
+                                                  -pady 0 \
+                                                -screen "" \
+                                             -takefocus 0 \
+                                                   -use "" \
+                                                -visual ""];
+
+            if { $::tk_version >= 8.7 } {
+                lappend TOPLEVEL_OPTIONS  -backgroundimage "" \
+                                                     -tile 0;
+            }
+
+            switch -- [tk windowingsystem] {
+                aqua {
+                    # Note:  Please don't split the following line in two.
+                    #        The '::tk::unsupported::MacWindowStyle' must be issued after creating the toplevel but before it appears onscreen.
+                    #
+                    #        References: https://wiki.tcl-lang.org/page/MacWindowStyle
+                    #                    https://tkdocs.com/tutorial/windows.html
+
+                    lappend TOPLEVEL_OPTIONS  -borderwidth 1 \
+                                                   -relief solid;
+
+                    toplevel .notify {*}$TOPLEVEL_OPTIONS; ::tk::unsupported::MacWindowStyle style .notify moveableModal {} help { noActivates hideOnSuspend }
+                }
+                win32 {
+                    lappend TOPLEVEL_OPTIONS  -borderwidth 2 \
+                                                   -relief groove;
+
+                    toplevel .notify {*}$TOPLEVEL_OPTIONS
+                }
+                default {
+                    lappend ATTRIBUTES -type dialog
+
+                    lappend TOPLEVEL_OPTIONS  -borderwidth 0 \
+                                                   -relief flat;
+
+                    toplevel .notify {*}$TOPLEVEL_OPTIONS
+                }
+            }
+
+            wm withdraw   .notify
+            wm attributes .notify {*}$ATTRIBUTES
+            wm minsize    .notify 324 200
+            wm protocol   .notify WM_DELETE_WINDOW [list set ::TEMP(response) EXIT]
+            wm title      .notify [::msgcat::mc "Error"]
+
+            # Create the window.
+            ::ttk::frame .notify.f           -borderwidth 0 \
+                                                   -class TFrame \
+                                                  -cursor "" \
+                                                  -height 0 \
+                                                 -padding [list 0 0] \
+                                                   -style TFrame \
+                                               -takefocus 0 \
+                                                   -width 0;
+
+            ::ttk::label .notify.f.error_img      -anchor w \
+                                                   -class TLabel \
+                                                -compound image \
+                                                  -cursor "" \
+                                                    -font "" \
+                                                   -image [list $::SVG(error)] \
+                                                 -justify left \
+                                                 -padding [list 0 0] \
+                                                  -relief flat \
+                                                   -state normal \
+                                                   -style TLabel \
+                                               -takefocus 0 \
+                                                    -text "" \
+                                            -textvariable "" \
+                                               -underline -1 \
+                                                   -width 0 \
+                                              -wraplength -1;
+
+            ::ttk::label .notify.f.msg            -anchor w \
+                                                   -class TLabel \
+                                                -compound text \
+                                                  -cursor "" \
+                                                    -font NormalFont \
+                                                   -image "" \
+                                                 -justify left \
+                                                 -padding [list 0 0] \
+                                                  -relief flat \
+                                                   -state normal \
+                                                   -style TLabel \
+                                               -takefocus 0 \
+                                                    -text [::msgcat::mc {*}$message] \
+                                            -textvariable "" \
+                                               -underline -1 \
+                                                   -width 0 \
+                                              -wraplength -1;
+
+            ::ttk::separator .notify.sep           -class TSeparator \
+                                                  -cursor "" \
+                                                  -orient horizontal \
+                                                   -style TSeparator \
+                                               -takefocus 0;
+
+            set BUTTON_OPTIONS  [list              -class TButton \
+                                                 -command [list set ::TEMP(response) EXIT] \
+                                                -compound text \
+                                                  -cursor "" \
+                                                 -default active \
+                                                   -image [list ] \
+                                                 -padding [list 2p 2p] \
+                                                   -state normal \
+                                                   -style TButton \
+                                               -takefocus 1 \
+                                                    -text [::msgcat::mc "Exit"] \
+                                            -textvariable "" \
+                                               -underline -1 \
+                                                   -width 8];
+
+            if { $::tk_version >= 8.7 } {
+                lappend BUTTON_OPTIONS           -justify center
+            }
+
+            ::ttk::button .notify.btn  {*}$BUTTON_OPTIONS
+
+            pack .notify.f.error_img    -anchor center \
+                                        -expand no \
+                                          -padx [list 2p 7p] \
+                                          -pady [list 13p 7p] \
+                                          -side left;
+
+            pack .notify.f.msg          -anchor w \
+                                        -expand yes \
+                                          -fill x \
+                                          -padx [list 7p 2p] \
+                                          -pady [list 13p 7p] \
+                                          -side left;
+
+            pack .notify.f              -anchor w \
+                                        -expand yes \
+                                          -fill x \
+                                          -padx [list 10p 10p] \
+                                          -pady [list 13p 7p] \
+                                          -side top;
+
+            pack .notify.btn            -anchor e \
+                                          -padx [list 0 12p] \
+                                          -pady [list 0 3p] \
+                                          -side bottom;
+
+            pack .notify.sep              -fill x \
+                                          -padx [list 12p 12p] \
+                                          -pady [list 8p 3p] \
+                                          -side bottom;
+
+            # Bindings.
+            bind .notify.btn    <KeyPress-Return>   [list set ::TEMP(response) EXIT]
+            bind .notify.btn    <KP_Enter>          [list set ::TEMP(response) EXIT]
+            bind .notify        <KeyPress-Escape>   [list set ::TEMP(response) EXIT]
+            bind .notify        <Map>               [list ::_CENTER_ON_THE_SCREEN .notify]
+
+            # Raise the toplevel.
+            update
+            wm deiconify .notify
+            raise .notify
+
+            # Block the possibilty for the user to resize the window.
+            wm resizable .notify 0 0
+
+            # Put the focus on the button.
+            #focus -force .notify.btn
+
+            # Grab the screen and wait for the user response.
+            grab set .notify
+            vwait ::TEMP(response)
+
+            # Release the screen.
+            grab release .notify
+            destroy .notify
+
+            # Exit from the application.
+            exit 1
+        }
+    }
+}
+
 # Start Jay.
 ::Jay::init
 
