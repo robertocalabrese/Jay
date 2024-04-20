@@ -554,6 +554,9 @@ proc ::Jay::init {} {
         1   { set config_version "" }
     }
     set ::JAY_PREFERENCE_FILE [file join $::CONFIG_DIR Jay [string cat jay $config_version .conf]]
+
+    # Set the background error replacement.
+    interp bgerror {} ::_BG_ERROR
 }
 
 
@@ -1188,7 +1191,7 @@ proc ::_CONVERT_MEASURE { measure args } {
 
 ## _FATAL_ERROR
 #
-# Display the fatal error window and exits.
+# Displays the fatal error window and exits.
 #
 # Where:
 #
@@ -1223,7 +1226,7 @@ proc ::_CONVERT_MEASURE { measure args } {
 #              If both these requirements are satisfied, a translation will be performed,
 #              otherwise the message provided will be used verbatim.
 #
-# It will exit from the application after the user closes the window.
+# It will close the entire application after the user closes the window.
 proc ::_FATAL_ERROR { message } {
     unset -nocomplain -- ::TEMP(response)
 
@@ -1487,6 +1490,61 @@ proc ::_FATAL_ERROR { message } {
 
             # Exit from the application.
             exit 1
+        }
+    }
+}
+
+## _BG_ERROR
+#
+# Display the background error window.
+#
+# Where:
+#
+# errortext,
+# errorcode     Should be the errortext and errorcode of the event.
+#               They are generally provided by tcl, unless this procedure was triggered directly.
+#
+# flag          Should not be provided, this option is for internal use only.
+#
+# It will close the entire application after the user closes the window.
+proc ::_BG_ERROR { errortext errorcode { flag 1 } } {
+    # The following code have been taken by the bgerror command, and edited for the Jay needs.
+
+    # Note:  On Aqua we cannot display the dialog if the background error occurs in an idle task
+    #        being processed inside of [NSView drawRect]. In that case we post the dialog
+    #        as an after task instead.
+    switch -- [tk windowingsystem] {
+        aqua {
+            switch -- $flag {
+                1   {
+                    after 500 [list ::_BG_ERROR "$errortext" "$errorcode" 0]
+                    return
+                }
+            }
+        }
+    }
+
+    unset -nocomplain -- ::TEMP(response)
+
+    # Check if Jay is fully initialized ('done') or not ('ongoing').
+    switch -- $::TEMP(init,state) {
+        done {
+            # Note:  Jay is allready initialized, we can safely use it's widgets.
+
+            # Note:  To be done.
+            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
+            puts stdout "Errortext: $errortext"
+            puts stdout "Errorcode: $errorcode"
+            exit 2
+        }
+        default {
+            # Note:  Jay is not fully initialized yet, we will use the Tk widgets.
+
+            # Note:  To be done.
+            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
+            puts stdout "Errortext: $errortext"
+            puts stdout "Errorcode: $errorcode"
+            exit 2
         }
     }
 }
