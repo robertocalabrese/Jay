@@ -221,6 +221,9 @@ proc ::Jay::init {} {
     # ['enabled' or 'disabled']
     set ::NOTIFICATIONS "enabled"
 
+    # It's a list that specifies all the available palettes.
+    set ::PALETTES [list ]
+
     # It's a boolean that specifies the popups state.
     #
     # ['enabled' or 'disabled']
@@ -557,6 +560,171 @@ proc ::Jay::init {} {
 
     # Set the background error replacement.
     interp bgerror {} ::_BG_ERROR
+
+    # Load the palette files.
+    set paths [glob -type f -nocomplain -directory [file join $::JAY_DIR palettes] -- *.txt]
+    switch -- $paths {
+        ""      { ::_FATAL_ERROR "There are no palettes available." }
+        default {
+            # Load what is supposed to be a palette file.
+            foreach path $paths {
+                set paletteName [file rootname [file tail $path]]
+                try {
+                    open $path r
+                } on error { errortext errorcode } {
+                    puts stdout "Unable to load the '$paletteName' palette. Ignoring."
+                } on ok { channel } {
+                    # Read the entire file.
+                    set file_content [split [read $channel] "\n"]
+                    close $channel
+
+                    # Init
+                    set all           [list ]
+                    set gray          [list ]
+                    set red           [list ]
+                    set red_orange    [list ]
+                    set orange        [list ]
+                    set orange_yellow [list ]
+                    set yellow        [list ]
+                    set yellow_green  [list ]
+                    set green         [list ]
+                    set green_cyan    [list ]
+                    set cyan          [list ]
+                    set cyan_blue     [list ]
+                    set blue          [list ]
+                    set blue_purple   [list ]
+                    set purple        [list ]
+                    set purple_red    [list ]
+
+                    set reject        false
+
+                    set colornames    [list ]
+                    set hexlist_8     [list ]
+                    set hexlist_12    [list ]
+                    set hexlist_16    [list ]
+                    set families      [list ]
+
+                    # Scan the file content line by line.
+                    foreach line $file_content {
+                        # Skip any empty or commented lines.
+                        switch -- [string index [string trim $line] 0] {
+                            ""      -
+                            "#"     { continue }
+                            default {
+                                # Note:  Reject any file that have invalid values.
+
+                                # Get the color values.
+                                set colorname [string trim    [lindex $line 0]]
+                                set hex8      [lindex $line   1]
+                                set hex12     [lindex $line   2]
+                                set hex16     [lindex $line   3]
+                                set family    [string tolower [lindex $line 4]]
+
+                                # Check the color name.
+                                switch -- $colorname {
+                                    ""  {
+                                        set reject true
+                                        break
+                                    }
+                                    default { lappend colornames $colorname }
+                                }
+
+                                # Check the color hexadecimal values.
+                                foreach { value depth } [list  $hex8 8 \
+                                                              $hex12 12 \
+                                                              $hex16 16] {
+                                    set value  [::_CHECK_COLOR     $value \
+                                                                   -depth $depth \
+                                                                -fallback INVALID \
+                                                                 -palette ON_ALL_PALETTES];
+                                    switch -- $value {
+                                        INVALID {
+                                            set reject true
+                                            break
+                                        }
+                                        default {
+                                            set hexlist [string cat "hexlist_" $depth]
+                                            lappend $hexlist $value
+                                        }
+                                    }
+                                }
+
+                                # Check the color family name.
+                                switch -- $family {
+                                    gray            -
+                                    red             -
+                                    "red_orange"    -
+                                    orange          -
+                                    "orange_yellow" -
+                                    yellow          -
+                                    "yellow_green"  -
+                                    green           -
+                                    "green_cyan"    -
+                                    cyan            -
+                                    "cyan_blue"     -
+                                    blue            -
+                                    "blue_purple"   -
+                                    purple          -
+                                    "purple_red"    { lappend families $family }
+                                    default {
+                                        set reject true
+                                        break
+                                    }
+                                }
+
+                                # Add the color to the list that contains all the colors available
+                                # (in this paletteName) that have the same family name.
+                                lappend $family $colorname
+
+                                # Add the color to the list that contains all the colors available
+                                # (in this paletteName), no matter the family name.
+                                lappend all     $colorname
+                            }
+                        }
+                    }
+
+                    switch -- $reject {
+                        false {
+                            # Add the paletteName into the available palettes.
+                            lappend ::PALETTES $paletteName
+
+                            # Add the paletteName data into the palette dictionary.
+                            set i 0
+                            foreach colorname $colornames {
+                                dict set ::TABLE(palette,$paletteName) colorname $colorname 8      [lindex $hexlist_8  $i]
+                                dict set ::TABLE(palette,$paletteName) colorname $colorname 12     [lindex $hexlist_12 $i]
+                                dict set ::TABLE(palette,$paletteName) colorname $colorname 16     [lindex $hexlist_16 $i]
+                                dict set ::TABLE(palette,$paletteName) colorname $colorname family [lindex $families   $i]
+                                incr i
+                            }
+                            dict set ::TABLE(palette,$paletteName) family all             $all
+                            dict set ::TABLE(palette,$paletteName) family gray            $gray
+                            dict set ::TABLE(palette,$paletteName) family red             $red
+                            dict set ::TABLE(palette,$paletteName) family "red_orange"    $red_orange
+                            dict set ::TABLE(palette,$paletteName) family orange          $orange
+                            dict set ::TABLE(palette,$paletteName) family "orange_yellow" $orange_yellow
+                            dict set ::TABLE(palette,$paletteName) family yellow          $yellow
+                            dict set ::TABLE(palette,$paletteName) family "yellow_green"  $yellow_green
+                            dict set ::TABLE(palette,$paletteName) family green           $green
+                            dict set ::TABLE(palette,$paletteName) family "green_cyan"    $green_cyan
+                            dict set ::TABLE(palette,$paletteName) family cyan            $cyan
+                            dict set ::TABLE(palette,$paletteName) family "cyan_blue"     $cyan_blue
+                            dict set ::TABLE(palette,$paletteName) family blue            $blue
+                            dict set ::TABLE(palette,$paletteName) family "blue_purple"   $blue_purple
+                            dict set ::TABLE(palette,$paletteName) family purple          $purple
+                            dict set ::TABLE(palette,$paletteName) family "purple_red"    $purple_red
+                        }
+                        true { puts stdout "'$paletteName' palette rejected. Ignoring." }
+                    }
+                }
+            }
+
+            # Check if no palettes were registered.
+            switch -- $::PALETTES {
+                ""  { ::_FATAL_ERROR "No palettes were found or all have been rejected." }
+            }
+        }
+    }
 }
 
 
