@@ -254,7 +254,7 @@ proc ::Jay::init {} {
     # It will always be interpreted as percentage even without the '%' symbol.
     #
     # [75.0,300.0]
-    set ::UI_SCALING_FACTOR 100.0
+    set ::UI_SCALE_FACTOR 100.0
 
     # It's a character that specifies the union symbol in use inside menus popups
     # or contextual menus, to indicate shortcuts combos like 'Ctrl+C' for copy.
