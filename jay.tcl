@@ -615,7 +615,7 @@ proc ::Jay::init {} {
     # Load the palette files.
     set paths [glob -type f -nocomplain -directory [file join $::JAY_DIR palettes] -- *.txt]
     switch -- $paths {
-        ""      { ::_FATAL_ERROR "There are no palettes available." }
+        ""      { ::_FATAL_ERROR [list "There are no palettes available."] }
         default {
             # Load what is supposed to be a palette file.
             foreach path $paths {
@@ -772,7 +772,7 @@ proc ::Jay::init {} {
 
             # Check if no palettes were registered.
             switch -- $::PALETTES {
-                ""  { ::_FATAL_ERROR "No palettes were found or all have been rejected." }
+                ""  { ::_FATAL_ERROR [list "No palettes were found or all have been rejected."] }
             }
         }
     }
