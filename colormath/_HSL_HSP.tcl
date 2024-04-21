@@ -24,6 +24,10 @@
 #   the saturation channels in the range [0,100.0],
 #   the perceived brightness channels in the range [0,100.0].
 proc ::_HSL_HSP { channels } {
+    set Yr $::sRGB(unadapted,Yr)
+    set Yg $::sRGB(unadapted,Yg)
+    set Yb $::sRGB(unadapted,Yb)
+
     foreach { hue saturation lightness } $channels {
         set s [expr { $saturation*0.01 }]; # [0,1.0]
         set l [expr { $lightness*0.01 }]; # [0,1.0]
@@ -83,7 +87,7 @@ proc ::_HSL_HSP { channels } {
             set b 1.0
         }
 
-        set perceived_brightness [expr { (sqrt(($r*$r*$::sRGB(unadapted,Yr))+($g*$g*$::sRGB(unadapted,Yg))+($b*$b*$::sRGB(unadapted,Yb))))*100.0 }]
+        set perceived_brightness [expr { (sqrt(($r*$r*$Yr)+($g*$g*$Yg)+($b*$b*$Yb)))*100.0 }]
 
         # Adjust the perceived brightness value if exceeds its limits [0,100.0].
         if { $perceived_brightness < 0 } {
