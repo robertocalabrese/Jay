@@ -776,6 +776,15 @@ proc ::Jay::init {} {
             }
         }
     }
+
+    # Load the color math functions.
+    foreach ::path [glob -type f -nocomplain -directory [file join $::JAY_DIR colormath] -- *.tcl] {
+        try {
+            apply { {} { source -encoding utf-8 $::path }}
+        } on error { errortext errorcode } {
+            ::_FATAL_ERROR [list "Unable to load '%s'." [file rootname [file tail $::path]]]
+        }
+    }
 }
 
 
