@@ -256,6 +256,57 @@ proc ::Jay::init {} {
     # ['+', '-' or 'space']
     set ::UNION "+"
 
+    # sRGB v4 - Chromaticity matrix.
+    #
+    #   | a1  b1  c1 |
+    #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
+    #   | a3  b3  c3 |
+    set ::sRGB(chromaticity) [list 0.63999938964843750 0.33000183105468750 1.00000000000000000 0.30000305175781250 0.60000610351562500 1.00000000000000000 0.14999389648437500 0.05999755859375000 1.00000000000000000]
+
+    # sRGB v4 - Whitepoint D65 xyz.
+    set ::sRGB(whitepoint,x) 0.31270049247729637
+    set ::sRGB(whitepoint,y) 0.32900093876915815
+    set ::sRGB(whitepoint,z) 0.3582985687535455
+
+    # sRGB v4 - Whitepoint D65 XYZ.
+    set ::sRGB(whitepoint,X) 0.95045471191406250
+    set ::sRGB(whitepoint,Y) 1.0
+    set ::sRGB(whitepoint,Z) 1.08905029296875000
+
+    # sRGB v4 - PCS D50 xyz.
+    set ::sRGB(PCS,x) 0.345702914918791
+    set ::sRGB(PCS,y) 0.3585385966799326
+    set ::sRGB(PCS,z) 0.2957584884012764
+
+    # sRGB v4 - PCS D50 XYZ.
+    set ::sRGB(PCS,X) 0.96419999999999995
+    set ::sRGB(PCS,Y) 1.0
+    set ::sRGB(PCS,Z) 0.82489999999999997
+
+    # sRGB v4 - Chromatic adaptation matrices (from 'D65' to 'D50' and viceversa).
+    #
+    #   | a1  b1  c1 |
+    #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
+    #   | a3  b3  c3 |
+    set ::sRGB(chad)         [list 1.04788208007812500 0.02958679199218750 -0.00924682617187500 0.02291870117187500 0.99047851562500000 0.01507568359375000 -0.05021667480468750 -0.01707458496093750 0.75167846679687500]
+    set ::sRGB(chad_inverse) [list 0.9555159902501114 -0.02307332134099263 0.06331013920126154 -0.028329994273946075 1.0099481697889854 0.021048637709356464 0.012322535106861805 -0.020539385824452097 1.3307127175165263]
+
+    # sRGB v4 - Unadapted Y.
+    set ::sRGB(unadapted,Yr) 0.21264461762001413
+    set ::sRGB(unadapted,Yg) 0.7151663725690272
+    set ::sRGB(unadapted,Yb) 0.07218900981095855
+
+    # sRGB v4 - RGB_XYZ and XYZ_RGB matrices.
+    #
+    #   | a1  b1  c1 |
+    #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
+    #   | a3  b3  c3 |
+    #
+    # If a chromatic adaptation is needed (like in this case, from 'D65' to 'D50'), the 'RGB_XYZ' and
+    # 'XYZ_RGB' data must be allready chromatically adapted.
+    set ::sRGB(RGB_XYZ) [list 0.43603515625000000 0.22248840332031250 0.01391601562500000 0.38511657714843750 0.71690368652343750 0.09706115722656250 0.14305114746093750 0.06060791015625000 0.71391296386718750]
+    set ::sRGB(XYZ_RGB) [list 3.134274306471669 -0.978795574325203 0.071978551323668 -1.617274016967423 1.916161596468483 -0.2289898906034097 -0.4907348029960735 0.03345405023031962 1.4057483687096277]
+
     # Load the accent colors.
     source -encoding utf-8 [file join $::JAY_DIR themes "accent_colors.tcl"]
 
