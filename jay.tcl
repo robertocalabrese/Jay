@@ -247,6 +247,9 @@ proc ::Jay::init {} {
     # ['ongoing', 'done']
     set ::TEMP(init,state) ongoing
 
+    # It's a list that specifies the available themes names.
+    set ::THEMES [list ]
+
     # It's a floating point that specifies the UI scale factor in use.
     # It will always be interpreted as percentage even without the '%' symbol.
     #
