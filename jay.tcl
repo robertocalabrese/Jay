@@ -177,6 +177,9 @@ proc ::Jay::init {} {
     # ['light' or 'dark']
     set ::COLORSCHEME "light"
 
+    # It's a string that specifies the theme in use.
+    set ::CURRENT_THEME ""
+
     # It's a boolean that specifies the debug state.
     #
     # ['enabled' or 'disabled']
