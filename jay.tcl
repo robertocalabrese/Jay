@@ -177,9 +177,6 @@ proc ::Jay::init {} {
     # ['light' or 'dark']
     set ::COLORSCHEME "light"
 
-    # It's a string that specifies the theme in use.
-    set ::CURRENT_THEME ""
-
     # It's a boolean that specifies the debug state.
     #
     # ['enabled' or 'disabled']
@@ -246,6 +243,9 @@ proc ::Jay::init {} {
     #
     # ['ongoing', 'done']
     set ::TEMP(init,state) ongoing
+
+    # It's a string that specifies the theme name currently in use.
+    set ::THEME ""
 
     # It's a list that specifies the available themes names.
     set ::THEMES [list ]
