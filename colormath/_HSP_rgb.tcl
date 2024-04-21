@@ -28,6 +28,10 @@
 #
 # Returns a list containing the resulting rgb channels, with each channel in the range [0,1.0].
 proc ::_HSP_rgb { channels } {
+    set Yr $::sRGB(unadapted,Yr)
+    set Yg $::sRGB(unadapted,Yg)
+    set Yb $::sRGB(unadapted,Yb)
+
     foreach { hue saturation perceived_brightness } $channels {
         set h  [expr { $hue*0.002777777777777778 }]; # [0,1.0]
         set s  [expr { $saturation*0.01 }]; # [0,1.0]
@@ -43,9 +47,9 @@ proc ::_HSP_rgb { channels } {
                 # Red > Green > Blue
                 set H       [expr { 6.0*$h }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yr)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yg)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yb)) }]
+                set a1      [expr { $Yr/($minovermax*$minovermax) }]
+                set a2      [expr { $Yg*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yb) }]
 
                 set b [expr { $pb/$sqrt }]
                 set r [expr { $b/$minovermax }]
@@ -54,9 +58,9 @@ proc ::_HSP_rgb { channels } {
                 # Green > Red > Blue
                 set H       [expr { 6.0*(0.3333333333333333-$h) }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yg)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yr)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yb)) }]
+                set a1      [expr { $Yg/($minovermax*$minovermax) }]
+                set a2      [expr { $Yr*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yb) }]
 
                 set b [expr { $pb/$sqrt }]
                 set g [expr { $b/$minovermax }]
@@ -65,9 +69,9 @@ proc ::_HSP_rgb { channels } {
                 # Green > Blue > Red
                 set H       [expr { 6.0*($h-0.3333333333333333) }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yg)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yb)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yr)) }]
+                set a1      [expr { $Yg/($minovermax*$minovermax) }]
+                set a2      [expr { $Yb*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yr) }]
 
                 set r [expr { $pb/$sqrt }]
                 set g [expr { $r/$minovermax }]
@@ -76,9 +80,9 @@ proc ::_HSP_rgb { channels } {
                 # Blue > Green > Red
                 set H       [expr { 6.0*(0.6666666666666666-$h) }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yb)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yg)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yr)) }]
+                set a1      [expr { $Yb/($minovermax*$minovermax) }]
+                set a2      [expr { $Yg*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yr) }]
 
                 set r [expr { $pb/$sqrt }]
                 set b [expr { $r/$minovermax }]
@@ -87,9 +91,9 @@ proc ::_HSP_rgb { channels } {
                 # Blue > Red > Green
                 set H       [expr { 6.0*($h-0.6666666666666666) }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yb)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yr)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yg)) }]
+                set a1      [expr { $Yb/($minovermax*$minovermax) }]
+                set a2      [expr { $Yr*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yg) }]
 
                 set g [expr { $pb/$sqrt }]
                 set b [expr { $g/$minovermax }]
@@ -98,9 +102,9 @@ proc ::_HSP_rgb { channels } {
                 # Red > Blue > Green
                 set H       [expr { 6.0*(1.0-$h) }]
                 set partial [expr { 1.0+($H*($fraction-1.0)) }]
-                set a1      [expr { $::sRGB(unadapted,Yr)/($minovermax*$minovermax) }]
-                set a2      [expr { $::sRGB(unadapted,Yb)*$partial*$partial }]
-                set sqrt    [expr { sqrt($a1+$a2+$::sRGB(unadapted,Yg)) }]
+                set a1      [expr { $Yr/($minovermax*$minovermax) }]
+                set a2      [expr { $Yb*$partial*$partial }]
+                set sqrt    [expr { sqrt($a1+$a2+$Yg) }]
 
                 set g [expr { $pb/$sqrt }]
                 set r [expr { $g/$minovermax }]
@@ -111,37 +115,37 @@ proc ::_HSP_rgb { channels } {
             if { $h < 0.16666666666666666 } {
                 # Red > Green > Blue
                 set H [expr { 6.0*$h }]
-                set r [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yr)+($::sRGB(unadapted,Yg)*$H*$H))) }]
+                set r [expr { sqrt(($pb*$pb)/($Yr+($Yg*$H*$H))) }]
                 set g [expr { $r*$H }]
                 set b 0
             } elseif { $h < 0.3333333333333333 } {
                 # Green > Red > Blue
                 set H [expr { 6.0*(0.3333333333333333-$h) }]
-                set g [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yg)+($::sRGB(unadapted,Yr)*$H*$H))) }]
+                set g [expr { sqrt(($pb*$pb)/($Yg+($Yr*$H*$H))) }]
                 set r [expr { $g*$H }]
                 set b 0
             } elseif { $h < 0.5 } {
                 # Green > Blue > Red
                 set H [expr { 6.0*($h-0.3333333333333333) }]
-                set g [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yg)+($::sRGB(unadapted,Yb)*$H*$H))) }]
+                set g [expr { sqrt(($pb*$pb)/($Yg+($Yb*$H*$H))) }]
                 set b [expr { $g*$H }]
                 set r 0
             } elseif { $h < 0.6666666666666666 } {
                 # Blue > Green > Red
                 set H [expr { 6.0*(0.6666666666666666-$h) }]
-                set b [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yb)+($::sRGB(unadapted,Yg)*$H*$H))) }]
+                set b [expr { sqrt(($pb*$pb)/($Yb+($Yg*$H*$H))) }]
                 set g [expr { $b*$H }]
                 set r 0
             } elseif { $h < 0.8333333333333334 } {
                 # Blue > Red > Green
                 set H [expr { 6.0*($h-0.6666666666666666) }]
-                set b [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yb)+($::sRGB(unadapted,Yr)*$H*$H))) }]
+                set b [expr { sqrt(($pb*$pb)/($Yb+($Yr*$H*$H))) }]
                 set r [expr { $b*$H }]
                 set g 0
             } else {
                 # Red > Blue > Green
                 set H [expr { 6.0*(1.0-$h) }]
-                set r [expr { sqrt(($pb*$pb)/($::sRGB(unadapted,Yr)+($::sRGB(unadapted,Yb)*$H*$H))) }]
+                set r [expr { sqrt(($pb*$pb)/($Yr+($Yb*$H*$H))) }]
                 set b [expr { $r*$H }]
                 set g 0
             }
