@@ -5,197 +5,197 @@
 # Palette name: Classic
 
 # Colorname           Hex 8     Hex 12       Hex 16          Family
-"Alice Blue"          #f0f8ff   #f0ef8ffff   #f0f0f8f8ffff   "cyan_blue"
+"Alice Blue"          #f0f8ff   #f0ef8ffff   #f0f0f8f8ffff   cyanblue
 "Antique White"       #faebd7   #fafebed7d   #fafaebebd7d7   orange
 Aqua                  #00ffff   #000ffffff   #0000ffffffff   cyan
-Aquamarine            #7fffd4   #7f7fffd4c   #7f7fffffd4d4   "green_cyan"
+Aquamarine            #7fffd4   #7f7fffd4c   #7f7fffffd4d4   greencyan
 Azure                 #f0ffff   #f0effffff   #f0f0ffffffff   cyan
 Beige                 #f5f5dc   #f5ef5edcd   #f5f5f5f5dcdc   yellow
 Bisque                #ffe4c4   #fffe4dc4c   #ffffe4e4c4c4   orange
 Black                 #000000   #000000000   #000000000000   gray
 "Blanched Almond"     #ffebcd   #fffebecdc   #ffffebebcdcd   orange
 Blue                  #0000ff   #000000fff   #00000000ffff   blue
-"Blue Violet"         #8a2be2   #8a82b3e2d   #8a8a2b2be2e2   "blue_purple"
+"Blue Violet"         #8a2be2   #8a82b3e2d   #8a8a2b2be2e2   bluepurple
 Brown                 #a52a2a   #a5a2a22a2   #a5a52a2a2a2a   red
 Burlywood             #deb887   #dedb8b878   #dedeb8b88787   orange
 "Cadet Blue"          #5f9ea0   #5f69e9a09   #5f5f9e9ea0a0   cyan
-Chartreuse            #7fff00   #7f7fff000   #7f7fffff0000   green
+Chartreuse            #7fff00   #7f7fff000   #7f7fffff0000   yellowgreen
 Chocolate             #d2691e   #d2c6961e2   #d2d269691e1e   orange
-Coral                 #ff7f50   #fff7f7505   #ffff7f7f5050   "red_orange"
-Cornflower            #6495ed   #646959ede   #64649595eded   "cyan_blue"
-Cornsilk              #fff8dc   #ffff8fdcd   #fffff8f8dcdc   "orange_yellow"
-Crimson               #dc143c   #dcd1413c4   #dcdc14143c3c   "purple_red"
+Coral                 #ff7f50   #fff7f7505   #ffff7f7f5050   orange
+Cornflower            #6495ed   #646959ede   #64649595eded   cyanblue
+Cornsilk              #fff8dc   #ffff8fdcd   #fffff8f8dcdc   yellow
+Crimson               #dc143c   #dcd1413c4   #dcdc14143c3c   red
 Cyan                  #00ffff   #000ffffff   #0000ffffffff   cyan
 "Dark Blue"           #00008b   #0000008b8   #000000008b8b   blue
 "Dark Cyan"           #008b8b   #0008b88b8   #00008b8b8b8b   cyan
-"Dark Goldenrod"      #b8860b   #b8b8680b1   #b8b886860b0b   "orange_yellow"
-"Dark Gray"           #a9a9a9   #a9aa9aa9a   #a9a9a9a9a9a9   gray
+"Dark Goldenrod"      #b8860b   #b8b8680b1   #b8b886860b0b   orange
+"Dark gray"           #a9a9a9   #a9aa9aa9a   #a9a9a9a9a9a9   gray
 "Dark Green"          #006400   #000646000   #000064640000   green
 "Dark Khaki"          #bdb76b   #bdbb7b6b6   #bdbdb7b76b6b   yellow
 "Dark Magenta"        #8b008b   #8b80008b8   #8b8b00008b8b   purple
-"Dark Olive Green"    #556b2f   #5556b62f3   #55556b6b2f2f   green
+"Dark Olive Green"    #556b2f   #5556b62f3   #55556b6b2f2f   yellowgreen
 "Dark Orange"         #ff8c00   #fff8c8000   #ffff8c8c0000   orange
-"Dark Orchid"         #9932cc   #999323ccc   #99993232cccc   "blue_purple"
+"Dark Orchid"         #9932cc   #999323ccc   #99993232cccc   bluepurple
 "Dark Red"            #8b0000   #8b8000000   #8b8b00000000   red
-"Dark Salmon"         #e9967a   #e9e9697a7   #e9e996967a7a   "red_orange"
+"Dark Salmon"         #e9967a   #e9e9697a7   #e9e996967a7a   orange
 "Dark Sea Green"      #8fbc8f   #8f8bcb8f8   #8f8fbcbc8f8f   green
-"Dark Slate Blue"     #483d8b   #4843d48b8   #48483d3d8b8b   "blue_purple"
-"Dark Slate Gray"     #2f4f4f   #2f34f54f5   #2f2f4f4f4f4f   cyan
+"Dark Slate Blue"     #483d8b   #4843d48b8   #48483d3d8b8b   blue
+"Dark Slate gray"     #2f4f4f   #2f34f54f5   #2f2f4f4f4f4f   cyan
 "Dark Turquoise"      #00ced1   #000cecd1c   #0000ceced1d1   cyan
-"Dark Violet"         #9400d3   #949000d3c   #94940000d3d3   purple
-"Deep Pink"           #ff1493   #fff141939   #ffff14149393   "purple_red"
-"Deep Sky Blue"       #00bfff   #000bfbfff   #0000bfbfffff   cyan
-"Dim Gray"            #696969   #696696696   #696969696969   gray
-"Dodger Blue"         #1e90ff   #1e2908fff   #1e1e9090ffff   "cyan_blue"
+"Dark Violet"         #9400d3   #949000d3c   #94940000d3d3   bluepurple
+"Deep Pink"           #ff1493   #fff141939   #ffff14149393   purplered
+"Deep Sky Blue"       #00bfff   #000bfbfff   #0000bfbfffff   cyanblue
+"Dim gray"            #696969   #696696696   #696969696969   gray
+"Dodger Blue"         #1e90ff   #1e2908fff   #1e1e9090ffff   cyanblue
 Firebrick             #b22222   #b2a222222   #b2b222222222   red
 "Floral White"        #fffaf0   #ffffaff0e   #fffffafaf0f0   orange
 "Forest Green"        #228b22   #2228b8222   #22228b8b2222   green
 Fuchsia               #ff00ff   #fff000fff   #ffff0000ffff   purple
 Gainsboro             #dcdcdc   #dcddcddcd   #dcdcdcdcdcdc   gray
 "Ghost White"         #f8f8ff   #f8ff8ffff   #f8f8f8f8ffff   blue
-Gold                  #ffd700   #fffd7d000   #ffffd7d70000   "orange_yellow"
-Goldenrod             #daa520   #dada5a202   #dadaa5a52020   "orange_yellow"
-Gray                  #bebebe   #bebbebbeb   #bebebebebebe   gray
-Gray1                 #030303   #030030030   #030303030303   gray
-Gray2                 #050505   #050050050   #050505050505   gray
-Gray3                 #080808   #080080080   #080808080808   gray
-Gray4                 #0a0a0a   #0a10a10a1   #0a0a0a0a0a0a   gray
-Gray5                 #0d0d0d   #0d10d10d1   #0d0d0d0d0d0d   gray
-Gray6                 #0f0f0f   #0f10f10f1   #0f0f0f0f0f0f   gray
-Gray7                 #121212   #121121121   #121212121212   gray
-Gray8                 #141414   #141141141   #141414141414   gray
-Gray9                 #171717   #171171171   #171717171717   gray
-Gray10                #1a1a1a   #1a21a21a2   #1a1a1a1a1a1a   gray
-Gray11                #1c1c1c   #1c21c21c2   #1c1c1c1c1c1c   gray
-Gray12                #1f1f1f   #1f21f21f2   #1f1f1f1f1f1f   gray
-Gray13                #212121   #212212212   #212121212121   gray
-Gray14                #242424   #242242242   #242424242424   gray
-Gray15                #262626   #262262262   #262626262626   gray
-Gray16                #292929   #292292292   #292929292929   gray
-Gray17                #2b2b2b   #2b32b32b3   #2b2b2b2b2b2b   gray
-Gray18                #2e2e2e   #2e32e32e3   #2e2e2e2e2e2e   gray
-Gray19                #303030   #303303303   #303030303030   gray
-Gray20                #333333   #333333333   #333333333333   gray
-Gray21                #363636   #363363363   #363636363636   gray
-Gray22                #383838   #383383383   #383838383838   gray
-Gray23                #3b3b3b   #3b33b33b3   #3b3b3b3b3b3b   gray
-Gray24                #3d3d3d   #3d43d43d4   #3d3d3d3d3d3d   gray
-Gray25                #404040   #404404404   #404040404040   gray
-Gray26                #424242   #424424424   #424242424242   gray
-Gray27                #454545   #454454454   #454545454545   gray
-Gray28                #474747   #474474474   #474747474747   gray
-Gray29                #4a4a4a   #4a44a44a4   #4a4a4a4a4a4a   gray
-Gray30                #4d4d4d   #4d54d54d5   #4d4d4d4d4d4d   gray
-Gray31                #4f4f4f   #4f54f54f5   #4f4f4f4f4f4f   gray
-Gray32                #525252   #525525525   #525252525252   gray
-Gray33                #545454   #545545545   #545454545454   gray
-Gray34                #575757   #575575575   #575757575757   gray
-Gray35                #595959   #595595595   #595959595959   gray
-Gray36                #5c5c5c   #5c55c55c5   #5c5c5c5c5c5c   gray
-Gray37                #5e5e5e   #5e65e65e6   #5e5e5e5e5e5e   gray
-Gray38                #616161   #616616616   #616161616161   gray
-Gray39                #636363   #636636636   #636363636363   gray
-Gray40                #666666   #666666666   #666666666666   gray
-Gray41                #696969   #696696696   #696969696969   gray
-Gray42                #6b6b6b   #6b66b66b6   #6b6b6b6b6b6b   gray
-Gray43                #6e6e6e   #6e66e66e6   #6e6e6e6e6e6e   gray
-Gray44                #707070   #707707707   #707070707070   gray
-Gray45                #737373   #737737737   #737373737373   gray
-Gray46                #757575   #757757757   #757575757575   gray
-Gray47                #787878   #787787787   #787878787878   gray
-Gray48                #7a7a7a   #7a77a77a7   #7a7a7a7a7a7a   gray
-Gray49                #7d7d7d   #7d77d77d7   #7d7d7d7d7d7d   gray
-Gray50                #7f7f7f   #7f77f77f7   #7f7f7f7f7f7f   gray
-Gray51                #828282   #828828828   #828282828282   gray
-Gray52                #858585   #858858858   #858585858585   gray
-Gray53                #878787   #878878878   #878787878787   gray
-Gray54                #8a8a8a   #8a88a88a8   #8a8a8a8a8a8a   gray
-Gray55                #8c8c8c   #8c88c88c8   #8c8c8c8c8c8c   gray
-Gray56                #8f8f8f   #8f88f88f8   #8f8f8f8f8f8f   gray
-Gray57                #919191   #919919919   #919191919191   gray
-Gray58                #949494   #949949949   #949494949494   gray
-Gray59                #969696   #969969969   #969696969696   gray
-Gray60                #999999   #999999999   #999999999999   gray
-Gray61                #9c9c9c   #9c99c99c9   #9c9c9c9c9c9c   gray
-Gray62                #9e9e9e   #9e99e99e9   #9e9e9e9e9e9e   gray
-Gray63                #a1a1a1   #a19a19a19   #a1a1a1a1a1a1   gray
-Gray64                #a3a3a3   #a3aa3aa3a   #a3a3a3a3a3a3   gray
-Gray65                #a6a6a6   #a6aa6aa6a   #a6a6a6a6a6a6   gray
-Gray66                #a8a8a8   #a8aa8aa8a   #a8a8a8a8a8a8   gray
-Gray67                #ababab   #abaabaaba   #abababababab   gray
-Gray68                #adadad   #adaadaada   #adadadadadad   gray
-Gray69                #b0b0b0   #b0ab0ab0a   #b0b0b0b0b0b0   gray
-Gray70                #b3b3b3   #b3bb3bb3b   #b3b3b3b3b3b3   gray
-Gray71                #b5b5b5   #b5bb5bb5b   #b5b5b5b5b5b5   gray
-Gray72                #b8b8b8   #b8bb8bb8b   #b8b8b8b8b8b8   gray
-Gray73                #bababa   #babbabbab   #babababababa   gray
-Gray74                #bdbdbd   #bdbbdbbdb   #bdbdbdbdbdbd   gray
-Gray75                #bfbfbf   #bfbbfbbfb   #bfbfbfbfbfbf   gray
-Gray76                #c2c2c2   #c2bc2bc2b   #c2c2c2c2c2c2   gray
-Gray77                #c4c4c4   #c4cc4cc4c   #c4c4c4c4c4c4   gray
-Gray78                #c7c7c7   #c7cc7cc7c   #c7c7c7c7c7c7   gray
-Gray79                #c9c9c9   #c9cc9cc9c   #c9c9c9c9c9c9   gray
-Gray80                #cccccc   #ccccccccc   #cccccccccccc   gray
-Gray81                #cfcfcf   #cfccfccfc   #cfcfcfcfcfcf   gray
-Gray82                #d1d1d1   #d1cd1cd1c   #d1d1d1d1d1d1   gray
-Gray83                #d4d4d4   #d4cd4cd4c   #d4d4d4d4d4d4   gray
-Gray84                #d6d6d6   #d6dd6dd6d   #d6d6d6d6d6d6   gray
-Gray85                #d9d9d9   #d9dd9dd9d   #d9d9d9d9d9d9   gray
-Gray86                #dbdbdb   #dbddbddbd   #dbdbdbdbdbdb   gray
-Gray87                #dedede   #deddedded   #dededededede   gray
-Gray88                #e0e0e0   #e0de0de0d   #e0e0e0e0e0e0   gray
-Gray89                #e3e3e3   #e3de3de3d   #e3e3e3e3e3e3   gray
-Gray90                #e5e5e5   #e5de5de5d   #e5e5e5e5e5e5   gray
-Gray91                #e8e8e8   #e8ee8ee8e   #e8e8e8e8e8e8   gray
-Gray92                #ebebeb   #ebeebeebe   #ebebebebebeb   gray
-Gray93                #ededed   #edeedeede   #edededededed   gray
-Gray94                #f0f0f0   #f0ef0ef0e   #f0f0f0f0f0f0   gray
-Gray95                #f2f2f2   #f2ef2ef2e   #f2f2f2f2f2f2   gray
-Gray96                #f5f5f5   #f5ef5ef5e   #f5f5f5f5f5f5   gray
-Gray97                #f7f7f7   #f7ff7ff7f   #f7f7f7f7f7f7   gray
-Gray98                #fafafa   #faffaffaf   #fafafafafafa   gray
-Gray99                #fcfcfc   #fcffcffcf   #fcfcfcfcfcfc   gray
+Gold                  #ffd700   #fffd7d000   #ffffd7d70000   yellow
+Goldenrod             #daa520   #dada5a202   #dadaa5a52020   orange
+gray                  #bebebe   #bebbebbeb   #bebebebebebe   gray
+gray1                 #030303   #030030030   #030303030303   gray
+gray2                 #050505   #050050050   #050505050505   gray
+gray3                 #080808   #080080080   #080808080808   gray
+gray4                 #0a0a0a   #0a10a10a1   #0a0a0a0a0a0a   gray
+gray5                 #0d0d0d   #0d10d10d1   #0d0d0d0d0d0d   gray
+gray6                 #0f0f0f   #0f10f10f1   #0f0f0f0f0f0f   gray
+gray7                 #121212   #121121121   #121212121212   gray
+gray8                 #141414   #141141141   #141414141414   gray
+gray9                 #171717   #171171171   #171717171717   gray
+gray10                #1a1a1a   #1a21a21a2   #1a1a1a1a1a1a   gray
+gray11                #1c1c1c   #1c21c21c2   #1c1c1c1c1c1c   gray
+gray12                #1f1f1f   #1f21f21f2   #1f1f1f1f1f1f   gray
+gray13                #212121   #212212212   #212121212121   gray
+gray14                #242424   #242242242   #242424242424   gray
+gray15                #262626   #262262262   #262626262626   gray
+gray16                #292929   #292292292   #292929292929   gray
+gray17                #2b2b2b   #2b32b32b3   #2b2b2b2b2b2b   gray
+gray18                #2e2e2e   #2e32e32e3   #2e2e2e2e2e2e   gray
+gray19                #303030   #303303303   #303030303030   gray
+gray20                #333333   #333333333   #333333333333   gray
+gray21                #363636   #363363363   #363636363636   gray
+gray22                #383838   #383383383   #383838383838   gray
+gray23                #3b3b3b   #3b33b33b3   #3b3b3b3b3b3b   gray
+gray24                #3d3d3d   #3d43d43d4   #3d3d3d3d3d3d   gray
+gray25                #404040   #404404404   #404040404040   gray
+gray26                #424242   #424424424   #424242424242   gray
+gray27                #454545   #454454454   #454545454545   gray
+gray28                #474747   #474474474   #474747474747   gray
+gray29                #4a4a4a   #4a44a44a4   #4a4a4a4a4a4a   gray
+gray30                #4d4d4d   #4d54d54d5   #4d4d4d4d4d4d   gray
+gray31                #4f4f4f   #4f54f54f5   #4f4f4f4f4f4f   gray
+gray32                #525252   #525525525   #525252525252   gray
+gray33                #545454   #545545545   #545454545454   gray
+gray34                #575757   #575575575   #575757575757   gray
+gray35                #595959   #595595595   #595959595959   gray
+gray36                #5c5c5c   #5c55c55c5   #5c5c5c5c5c5c   gray
+gray37                #5e5e5e   #5e65e65e6   #5e5e5e5e5e5e   gray
+gray38                #616161   #616616616   #616161616161   gray
+gray39                #636363   #636636636   #636363636363   gray
+gray40                #666666   #666666666   #666666666666   gray
+gray41                #696969   #696696696   #696969696969   gray
+gray42                #6b6b6b   #6b66b66b6   #6b6b6b6b6b6b   gray
+gray43                #6e6e6e   #6e66e66e6   #6e6e6e6e6e6e   gray
+gray44                #707070   #707707707   #707070707070   gray
+gray45                #737373   #737737737   #737373737373   gray
+gray46                #757575   #757757757   #757575757575   gray
+gray47                #787878   #787787787   #787878787878   gray
+gray48                #7a7a7a   #7a77a77a7   #7a7a7a7a7a7a   gray
+gray49                #7d7d7d   #7d77d77d7   #7d7d7d7d7d7d   gray
+gray50                #7f7f7f   #7f77f77f7   #7f7f7f7f7f7f   gray
+gray51                #828282   #828828828   #828282828282   gray
+gray52                #858585   #858858858   #858585858585   gray
+gray53                #878787   #878878878   #878787878787   gray
+gray54                #8a8a8a   #8a88a88a8   #8a8a8a8a8a8a   gray
+gray55                #8c8c8c   #8c88c88c8   #8c8c8c8c8c8c   gray
+gray56                #8f8f8f   #8f88f88f8   #8f8f8f8f8f8f   gray
+gray57                #919191   #919919919   #919191919191   gray
+gray58                #949494   #949949949   #949494949494   gray
+gray59                #969696   #969969969   #969696969696   gray
+gray60                #999999   #999999999   #999999999999   gray
+gray61                #9c9c9c   #9c99c99c9   #9c9c9c9c9c9c   gray
+gray62                #9e9e9e   #9e99e99e9   #9e9e9e9e9e9e   gray
+gray63                #a1a1a1   #a19a19a19   #a1a1a1a1a1a1   gray
+gray64                #a3a3a3   #a3aa3aa3a   #a3a3a3a3a3a3   gray
+gray65                #a6a6a6   #a6aa6aa6a   #a6a6a6a6a6a6   gray
+gray66                #a8a8a8   #a8aa8aa8a   #a8a8a8a8a8a8   gray
+gray67                #ababab   #abaabaaba   #abababababab   gray
+gray68                #adadad   #adaadaada   #adadadadadad   gray
+gray69                #b0b0b0   #b0ab0ab0a   #b0b0b0b0b0b0   gray
+gray70                #b3b3b3   #b3bb3bb3b   #b3b3b3b3b3b3   gray
+gray71                #b5b5b5   #b5bb5bb5b   #b5b5b5b5b5b5   gray
+gray72                #b8b8b8   #b8bb8bb8b   #b8b8b8b8b8b8   gray
+gray73                #bababa   #babbabbab   #babababababa   gray
+gray74                #bdbdbd   #bdbbdbbdb   #bdbdbdbdbdbd   gray
+gray75                #bfbfbf   #bfbbfbbfb   #bfbfbfbfbfbf   gray
+gray76                #c2c2c2   #c2bc2bc2b   #c2c2c2c2c2c2   gray
+gray77                #c4c4c4   #c4cc4cc4c   #c4c4c4c4c4c4   gray
+gray78                #c7c7c7   #c7cc7cc7c   #c7c7c7c7c7c7   gray
+gray79                #c9c9c9   #c9cc9cc9c   #c9c9c9c9c9c9   gray
+gray80                #cccccc   #ccccccccc   #cccccccccccc   gray
+gray81                #cfcfcf   #cfccfccfc   #cfcfcfcfcfcf   gray
+gray82                #d1d1d1   #d1cd1cd1c   #d1d1d1d1d1d1   gray
+gray83                #d4d4d4   #d4cd4cd4c   #d4d4d4d4d4d4   gray
+gray84                #d6d6d6   #d6dd6dd6d   #d6d6d6d6d6d6   gray
+gray85                #d9d9d9   #d9dd9dd9d   #d9d9d9d9d9d9   gray
+gray86                #dbdbdb   #dbddbddbd   #dbdbdbdbdbdb   gray
+gray87                #dedede   #deddedded   #dededededede   gray
+gray88                #e0e0e0   #e0de0de0d   #e0e0e0e0e0e0   gray
+gray89                #e3e3e3   #e3de3de3d   #e3e3e3e3e3e3   gray
+gray90                #e5e5e5   #e5de5de5d   #e5e5e5e5e5e5   gray
+gray91                #e8e8e8   #e8ee8ee8e   #e8e8e8e8e8e8   gray
+gray92                #ebebeb   #ebeebeebe   #ebebebebebeb   gray
+gray93                #ededed   #edeedeede   #edededededed   gray
+gray94                #f0f0f0   #f0ef0ef0e   #f0f0f0f0f0f0   gray
+gray95                #f2f2f2   #f2ef2ef2e   #f2f2f2f2f2f2   gray
+gray96                #f5f5f5   #f5ef5ef5e   #f5f5f5f5f5f5   gray
+gray97                #f7f7f7   #f7ff7ff7f   #f7f7f7f7f7f7   gray
+gray98                #fafafa   #faffaffaf   #fafafafafafa   gray
+gray99                #fcfcfc   #fcffcffcf   #fcfcfcfcfcfc   gray
 Green                 #00ff00   #000fff000   #0000ffff0000   green
-"Green Yellow"        #adff2f   #adafff2f3   #adadffff2f2f   green
+"Green Yellow"        #adff2f   #adafff2f3   #adadffff2f2f   yellowgreen
 Honeydew              #f0fff0   #f0effff0e   #f0f0fffff0f0   green
-"Hot Pink"            #ff69b4   #fff696b4b   #ffff6969b4b4   "purple_red"
+"Hot Pink"            #ff69b4   #fff696b4b   #ffff6969b4b4   purplered
 "Indian Red"          #cd5c5c   #cdc5c55c5   #cdcd5c5c5c5c   red
-Indigo                #4b0082   #4b4000828   #4b4b00008282   "blue_purple"
+Indigo                #4b0082   #4b4000828   #4b4b00008282   bluepurple
 Ivory                 #fffff0   #fffffff0e   #fffffffff0f0   yellow
 Khaki                 #f0e68c   #f0ee6e8c8   #f0f0e6e68c8c   yellow
 Lavender              #e6e6fa   #e6ee6efaf   #e6e6e6e6fafa   blue
-"Lavender Blush"      #fff0f5   #ffff0ef5e   #fffff0f0f5f5   "purple_red"
-"Lawn Green"          #7cfc00   #7c7fcf000   #7c7cfcfc0000   green
+"Lavender Blush"      #fff0f5   #ffff0ef5e   #fffff0f0f5f5   purplered
+"Lawn Green"          #7cfc00   #7c7fcf000   #7c7cfcfc0000   yellowgreen
 "Lemon Chiffon"       #fffacd   #ffffafcdc   #fffffafacdcd   yellow
 "Light Blue"          #add8e6   #adad8de6e   #adadd8d8e6e6   cyan
 "Light Coral"         #f08080   #f0e808808   #f0f080808080   red
 "Light Cyan"          #e0ffff   #e0dffffff   #e0e0ffffffff   cyan
 "Light Goldenrod"     #fafad2   #faffafd2c   #fafafafad2d2   yellow
-"Light Gray"          #d3d3d3   #d3cd3cd3c   #d3d3d3d3d3d3   gray
+"Light gray"          #d3d3d3   #d3cd3cd3c   #d3d3d3d3d3d3   gray
 "Light Green"         #90ee90   #908eee908   #9090eeee9090   green
-"Light Pink"          #ffb6c1   #fffb6bc1b   #ffffb6b6c1c1   "purple_red"
-"Light Salmon"        #ffa07a   #fffa097a7   #ffffa0a07a7a   "red_orange"
+"Light Pink"          #ffb6c1   #fffb6bc1b   #ffffb6b6c1c1   red
+"Light Salmon"        #ffa07a   #fffa097a7   #ffffa0a07a7a   orange
 "Light Sea Green"     #20b2aa   #202b2aaaa   #2020b2b2aaaa   cyan
-"Light Sky Blue"      #87cefa   #878cecfaf   #8787cecefafa   "cyan_blue"
-"Light Slate Gray"    #778899   #777888999   #777788889999   "cyan_blue"
-"Light Steel Blue"    #b0c4de   #b0ac4cded   #b0b0c4c4dede   "cyan_blue"
+"Light Sky Blue"      #87cefa   #878cecfaf   #8787cecefafa   cyanblue
+"Light Slate gray"    #778899   #777888999   #777788889999   cyanblue
+"Light Steel Blue"    #b0c4de   #b0ac4cded   #b0b0c4c4dede   cyanblue
 "Light Yellow"        #ffffe0   #ffffffe0d   #ffffffffe0e0   yellow
 Lime                  #00ff00   #000fff000   #0000ffff0000   green
 "Lime Green"          #32cd32   #323cdc323   #3232cdcd3232   green
 Linen                 #faf0e6   #faff0ee6e   #fafaf0f0e6e6   orange
 Magenta               #ff00ff   #fff000fff   #ffff0000ffff   purple
-Maroon                #b03060   #b0a303606   #b0b030306060   "purple_red"
-"Medium Aquamarine"   #66cdaa   #666cdcaaa   #6666cdcdaaaa   "green_cyan"
+Maroon                #b03060   #b0a303606   #b0b030306060   purplered
+"Medium Aquamarine"   #66cdaa   #666cdcaaa   #6666cdcdaaaa   greencyan
 "Medium Blue"         #0000cd   #000000cdc   #00000000cdcd   blue
 "Medium Orchid"       #ba55d3   #bab555d3c   #baba5555d3d3   purple
-"Medium Purple"       #9370db   #939707dbd   #93937070dbdb   "blue_purple"
-"Medium Sea Green"    #3cb371   #3c4b3b717   #3c3cb3b37171   "green_cyan"
-"Medium Slate Blue"   #7b68ee   #7b7686eee   #7b7b6868eeee   "blue_purple"
-"Medium Spring Green" #00fa9a   #000faf9a9   #0000fafa9a9a   "green_cyan"
+"Medium Purple"       #9370db   #939707dbd   #93937070dbdb   bluepurple
+"Medium Sea Green"    #3cb371   #3c4b3b717   #3c3cb3b37171   greencyan
+"Medium Slate Blue"   #7b68ee   #7b7686eee   #7b7b6868eeee   blue
+"Medium Spring Green" #00fa9a   #000faf9a9   #0000fafa9a9a   greencyan
 "Medium Turquoise"    #48d1cc   #484d1cccc   #4848d1d1cccc   cyan
-"Medium Violet Red"   #c71585   #c7c151858   #c7c715158585   "purple_red"
+"Medium Violet Red"   #c71585   #c7c151858   #c7c715158585   purplered
 "Midnight Blue"       #191970   #191191707   #191919197070   blue
-"Mint Cream"          #f5fffa   #f5effffaf   #f5f5fffffafa   "green_cyan"
+"Mint Cream"          #f5fffa   #f5effffaf   #f5f5fffffafa   greencyan
 "Misty Rose"          #ffe4e1   #fffe4de1d   #ffffe4e4e1e1   red
 Moccasin              #ffe4b5   #fffe4db5b   #ffffe4e4b5b5   orange
 "Navajo White"        #ffdead   #fffdedada   #ffffdedeadad   orange
@@ -204,44 +204,44 @@ Moccasin              #ffe4b5   #fffe4db5b   #ffffe4e4b5b5   orange
 Olive                 #808000   #808808000   #808080800000   yellow
 "Olive Drab"          #6b8e23   #6b68e8232   #6b6b8e8e2323   yellowgreen
 Orange                #ffa500   #fffa5a000   #ffffa5a50000   orange
-"Orange Red"          #ff4500   #fff454000   #ffff45450000   "red_orange"
+"Orange Red"          #ff4500   #fff454000   #ffff45450000   orange
 Orchid                #da70d6   #dad707d6d   #dada7070d6d6   purple
 "Pale Goldenrod"      #eee8aa   #eeee8eaaa   #eeeee8e8aaaa   yellow
 "Pale Green"          #98fb98   #989fbf989   #9898fbfb9898   green
 "Pale Turquoise"      #afeeee   #afaeeeeee   #afafeeeeeeee   cyan
-"Pale Violet Red"     #db7093   #dbd707939   #dbdb70709393   "purple_red"
+"Pale Violet Red"     #db7093   #dbd707939   #dbdb70709393   purplered
 "Papaya Whip"         #ffefd5   #fffefed5d   #ffffefefd5d5   orange
 "Peach Puff"          #ffdab9   #fffdadb9b   #ffffdadab9b9   orange
 Peru                  #cd853f   #cdc8583f4   #cdcd85853f3f   orange
-Pink                  #ffc0cb   #fffc0bcbc   #ffffc0c0cbcb   "purple_red"
+Pink                  #ffc0cb   #fffc0bcbc   #ffffc0c0cbcb   red
 Plum                  #dda0dd   #ddda09ddd   #dddda0a0dddd   purple
 "Powder Blue"         #b0e0e6   #b0ae0de6e   #b0b0e0e0e6e6   cyan
-Purple                #a020f0   #a09202f0e   #a0a02020f0f0   "blue_purple"
-"Rebecca Purple"      #663399   #666333999   #666633339999   "blue_purple"
+Purple                #a020f0   #a09202f0e   #a0a02020f0f0   bluepurple
+"Rebecca Purple"      #663399   #666333999   #666633339999   bluepurple
 Red                   #ff0000   #fff000000   #ffff00000000   red
 "Rosy Brown"          #bc8f8f   #bcb8f88f8   #bcbc8f8f8f8f   red
-"Royal Blue"          #4169e1   #414696e1d   #41416969e1e1   blue
+"Royal Blue"          #4169e1   #414696e1d   #41416969e1e1   cyanblue
 "Saddle Brown"        #8b4513   #8b8454131   #8b8b45451313   orange
 Salmon                #fa8072   #faf808727   #fafa80807272   red
 "Sandy Brown"         #f4a460   #f4ea4a606   #f4f4a4a46060   orange
-"Sea Green"           #2e8b57   #2e38b8575   #2e2e8b8b5757   "green_cyan"
+"Sea Green"           #2e8b57   #2e38b8575   #2e2e8b8b5757   greencyan
 Seashell              #fff5ee   #ffff5eeee   #fffff5f5eeee   orange
-Sienna                #a0522d   #a095252d3   #a0a052522d2d   "red_orange"
+Sienna                #a0522d   #a095252d3   #a0a052522d2d   orange
 Silver                #c0c0c0   #c0bc0bc0b   #c0c0c0c0c0c0   gray
-"Sky Blue"            #87ceeb   #878cecebe   #8787ceceebeb   cyan
-"Slate Blue"          #6a5acd   #6a65a5cdc   #6a6a5a5acdcd   "blue_purple"
-"Slate Gray"          #708090   #707808908   #707080809090   "cyan_blue"
+"Sky Blue"            #87ceeb   #878cecebe   #8787ceceebeb   cyanblue
+"Slate Blue"          #6a5acd   #6a65a5cdc   #6a6a5a5acdcd   blue
+"Slate gray"          #708090   #707808908   #707080809090   cyanblue
 Snow                  #fffafa   #ffffaffaf   #fffffafafafa   red
-"Spring Green"        #00ff7f   #000fff7f7   #0000ffff7f7f   "green_cyan"
-"Steel Blue"          #4682b4   #464828b4b   #46468282b4b4   "cyan_blue"
+"Spring Green"        #00ff7f   #000fff7f7   #0000ffff7f7f   greencyan
+"Steel Blue"          #4682b4   #464828b4b   #46468282b4b4   cyanblue
 Tan                   #d2b48c   #d2cb4b8c8   #d2d2b4b48c8c   orange
 Teal                  #008080   #000808808   #000080808080   cyan
 Thistle               #d8bfd8   #d8dbfbd8d   #d8d8bfbfd8d8   purple
 Tomato                #ff6347   #fff636474   #ffff63634747   red
 Turquoise             #40e0d0   #404e0dd0c   #4040e0e0d0d0   cyan
 Violet                #ee82ee   #eee828eee   #eeee8282eeee   purple
-"Web Green"           #008000   #000808000   #000080800000   gray
-"Web Gray"            #808080   #808808808   #808080808080   green
+"Web Green"           #008000   #000808000   #000080800000   green
+"Web gray"            #808080   #808808808   #808080808080   gray
 "Web Maroon"          #7f0000   #7f7000000   #7f7f00000000   red
 "Web Purple"          #7f007f   #7f70007f7   #7f7f00007f7f   purple
 Wheat                 #f5deb3   #f5ededb3b   #f5f5dedeb3b3   orange
