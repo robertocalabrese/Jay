@@ -625,41 +625,39 @@ proc ::Jay::init {} {
         default {
             # Load what is supposed to be a palette file.
             foreach path $paths {
-                set paletteName [file rootname [file tail $path]]
+                set palette [file rootname [file tail $path]]
                 try {
                     open $path r
                 } on error { errortext errorcode } {
-                    puts stdout "Unable to load the '$paletteName' palette. Ignoring."
+                    puts stdout "Unable to load the '$palette' palette. Ignoring."
                 } on ok { channel } {
                     # Read the entire file.
                     set file_content [split [read $channel] "\n"]
                     close $channel
 
-                    # Init
-                    set all           [list ]
-                    set gray          [list ]
-                    set red           [list ]
-                    set red_orange    [list ]
-                    set orange        [list ]
-                    set orange_yellow [list ]
-                    set yellow        [list ]
-                    set yellow_green  [list ]
-                    set green         [list ]
-                    set green_cyan    [list ]
-                    set cyan          [list ]
-                    set cyan_blue     [list ]
-                    set blue          [list ]
-                    set blue_purple   [list ]
-                    set purple        [list ]
-                    set purple_red    [list ]
+                    # Init/Reset the variables.
+                    set reject      false
 
-                    set reject        false
+                    set colornames  [list ]
+                    set hexlist_8   [list ]
+                    set hexlist_12  [list ]
+                    set hexlist_16  [list ]
+                    set families    [list ]
 
-                    set colornames    [list ]
-                    set hexlist_8     [list ]
-                    set hexlist_12    [list ]
-                    set hexlist_16    [list ]
-                    set families      [list ]
+                    set all         [list ]
+                    set gray        [list ]
+                    set red         [list ]
+                    set orange      [list ]
+                    set yellow      [list ]
+                    set yellowgreen [list ]
+                    set green       [list ]
+                    set greencyan   [list ]
+                    set cyan        [list ]
+                    set cyanblue    [list ]
+                    set blue        [list ]
+                    set bluepurple  [list ]
+                    set purple      [list ]
+                    set purplered   [list ]
 
                     # Scan the file content line by line.
                     foreach line $file_content {
@@ -700,78 +698,77 @@ proc ::Jay::init {} {
                                             break
                                         }
                                         default {
-                                            set hexlist [string cat "hexlist_" $depth]
-                                            lappend $hexlist $value
+                                            switch -- $depth {
+                                                8   { lappend hexlist_8  $value }
+                                                12  { lappend hexlist_12 $value }
+                                                16  { lappend hexlist_16 $value }
+                                            }
                                         }
                                     }
                                 }
 
                                 # Check the color family name.
                                 switch -- $family {
-                                    gray            -
-                                    red             -
-                                    "red_orange"    -
-                                    orange          -
-                                    "orange_yellow" -
-                                    yellow          -
-                                    "yellow_green"  -
-                                    green           -
-                                    "green_cyan"    -
-                                    cyan            -
-                                    "cyan_blue"     -
-                                    blue            -
-                                    "blue_purple"   -
-                                    purple          -
-                                    "purple_red"    { lappend families $family }
+                                    gray        -
+                                    red         -
+                                    orange      -
+                                    yellow      -
+                                    yellowgreen -
+                                    green       -
+                                    greencyan   -
+                                    cyan        -
+                                    cyanblue    -
+                                    blue        -
+                                    bluepurple  -
+                                    purple      -
+                                    purplered   { lappend families $family }
                                     default {
                                         set reject true
                                         break
                                     }
                                 }
 
-                                # Add the color to the list that contains all the colors available
-                                # (in this paletteName) that have the same family name.
+                                # Add the palette color in its relative palette family list.
                                 lappend $family $colorname
 
-                                # Add the color to the list that contains all the colors available
-                                # (in this paletteName), no matter the family name.
-                                lappend all     $colorname
+                                # Add the palette color to the available palette color names list.
+                                lappend all $colorname
                             }
                         }
                     }
 
                     switch -- $reject {
                         false {
-                            # Add the paletteName into the available palettes.
-                            lappend ::PALETTES $paletteName
+                            # Register the palette into the available palettes.
+                            lappend ::PALETTES $palette
 
-                            # Add the paletteName data into the palette dictionary.
+                            # Register the palette data.
                             set i 0
                             foreach colorname $colornames {
-                                dict set ::TABLE(palette,$paletteName) colorname $colorname 8      [lindex $hexlist_8  $i]
-                                dict set ::TABLE(palette,$paletteName) colorname $colorname 12     [lindex $hexlist_12 $i]
-                                dict set ::TABLE(palette,$paletteName) colorname $colorname 16     [lindex $hexlist_16 $i]
-                                dict set ::TABLE(palette,$paletteName) colorname $colorname family [lindex $families   $i]
+                                dict set ::TABLE(palette,$palette) colorname $colorname 8      [lindex $hexlist_8  $i]
+                                dict set ::TABLE(palette,$palette) colorname $colorname 12     [lindex $hexlist_12 $i]
+                                dict set ::TABLE(palette,$palette) colorname $colorname 16     [lindex $hexlist_16 $i]
+                                dict set ::TABLE(palette,$palette) colorname $colorname family [lindex $families   $i]
                                 incr i
                             }
-                            dict set ::TABLE(palette,$paletteName) family all             $all
-                            dict set ::TABLE(palette,$paletteName) family gray            $gray
-                            dict set ::TABLE(palette,$paletteName) family red             $red
-                            dict set ::TABLE(palette,$paletteName) family "red_orange"    $red_orange
-                            dict set ::TABLE(palette,$paletteName) family orange          $orange
-                            dict set ::TABLE(palette,$paletteName) family "orange_yellow" $orange_yellow
-                            dict set ::TABLE(palette,$paletteName) family yellow          $yellow
-                            dict set ::TABLE(palette,$paletteName) family "yellow_green"  $yellow_green
-                            dict set ::TABLE(palette,$paletteName) family green           $green
-                            dict set ::TABLE(palette,$paletteName) family "green_cyan"    $green_cyan
-                            dict set ::TABLE(palette,$paletteName) family cyan            $cyan
-                            dict set ::TABLE(palette,$paletteName) family "cyan_blue"     $cyan_blue
-                            dict set ::TABLE(palette,$paletteName) family blue            $blue
-                            dict set ::TABLE(palette,$paletteName) family "blue_purple"   $blue_purple
-                            dict set ::TABLE(palette,$paletteName) family purple          $purple
-                            dict set ::TABLE(palette,$paletteName) family "purple_red"    $purple_red
+
+                            # Register the palette families list.
+                            dict set ::TABLE(palette,$palette) family all          $all
+                            dict set ::TABLE(palette,$palette) family gray         $gray
+                            dict set ::TABLE(palette,$palette) family red          $red
+                            dict set ::TABLE(palette,$palette) family orange       $orange
+                            dict set ::TABLE(palette,$palette) family yellow       $yellow
+                            dict set ::TABLE(palette,$palette) family yellowgreen  $yellowgreen
+                            dict set ::TABLE(palette,$palette) family green        $green
+                            dict set ::TABLE(palette,$palette) family greencyan    $greencyan
+                            dict set ::TABLE(palette,$palette) family cyan         $cyan
+                            dict set ::TABLE(palette,$palette) family cyanblue     $cyanblue
+                            dict set ::TABLE(palette,$palette) family blue         $blue
+                            dict set ::TABLE(palette,$palette) family bluepurple   $bluepurple
+                            dict set ::TABLE(palette,$palette) family purple       $purple
+                            dict set ::TABLE(palette,$palette) family purplered    $purplered
                         }
-                        true { puts stdout "'$paletteName' palette rejected. Ignoring." }
+                        true { puts stdout "'$palette' palette rejected. Ignoring." }
                     }
                 }
             }
