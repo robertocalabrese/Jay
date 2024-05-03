@@ -4,29 +4,52 @@
 
 # ::_XYZ_rgb
 #
-# Transform XYZ channels (PCS D50) into rgb channels.
+# Transform XYZ colors (without alpha channel) into rgb colors (without alpha channel).
+# The XYZ data will be relative to the PCS D50 space.
 #
 # Where:
 #
-# channels      Should be a list containing the XYZ channels values to convert, with:
-#                   the X channels in the range [0,$::sRGB(PCS,X)],
-#                   the Y channels in the range [0,$::sRGB(PCS,Y)],
-#                   the Z channels in the range [0,$::sRGB(PCS,Z)].
+# channels      Should be a list that specifies all the channels (flattened together) of the XYZ colors to convert.
+#               Each XYZ color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   X --> X [0,$sRGB(PCS,X)]
+#                   Y --> Y [0,$sRGB(PCS,Y)]
+#                   Z --> Z [0,$sRGB(PCS,Z)]
+#
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
+#
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 0.4 0.5 0.2]
+#                       channels --> [list 0.4 0.5 0.2]
+#
+#                   Two colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       color3   --> [list 0.2 0.2 0.1]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6 0.2 0.2 0.1] <-- all colors channels must be flattened together.
 #
 # Note:  For info about companding, XYZ_RGB matrices and chromatic adaptations visit 'http://www.brucelindbloom.com'.
 #
-# Returns a list containing the resulting rgb channels, with each channel in the range [0,1.0].
+# Return a list containing the resulting rgb colors channels (flattened together).
+# Each rgb color will be rappresented by 3 channels values in the following order and ranges:
+#   r --> red   [0,1.0]
+#   g --> green [0,1.0]
+#   b --> blue  [0,1.0]
 proc ::_XYZ_rgb { channels } {
     foreach { X Y Z } $channels {
-        ###################################################
-        # Transform the XYZ values into linear rgb values #
-        ###################################################
-
         # XYZ_RGB matrix (with chromatic adaptation) * XYZ = rgb
         #   | a1  b1  c1 |   | X |   | r |
         #   | a2  b2  c2 | * | Y | = | g |
         #   | a3  b3  c3 |   | Z |   | b |
 
+        # Transform the XYZ values into linear rgb values.
         set a1 [lindex $::sRGB(XYZ_RGB) 0]
         set a2 [lindex $::sRGB(XYZ_RGB) 1]
         set a3 [lindex $::sRGB(XYZ_RGB) 2]
@@ -41,35 +64,10 @@ proc ::_XYZ_rgb { channels } {
         set g [expr { ($a2*$X)+($b2*$Y)+($c2*$Z) }]
         set b [expr { ($a3*$X)+($b3*$Y)+($c3*$Z) }]
 
-        #############################################################
-        # Trasform the linear rgb values into non-linear rgb values #
-        #############################################################
-
+        # Trasform the linear rgb values into non-linear rgb values.
         set r [::_COMPANDING $r]
         set g [::_COMPANDING $g]
         set b [::_COMPANDING $b]
-
-        ##############################################################
-        # Adjust the rgb values if they exceeds their limits [0,1.0] #
-        ##############################################################
-
-        if { $r < 0 } {
-            set r 0
-        } elseif { $r > 1.0 } {
-            set r 1.0
-        }
-
-        if { $g < 0 } {
-            set g 0
-        } elseif { $g > 1.0 } {
-            set g 1.0
-        }
-
-        if { $b < 0 } {
-            set b 0
-        } elseif { $b > 1.0 } {
-            set b 1.0
-        }
 
         lappend results $r $g $b
     }
