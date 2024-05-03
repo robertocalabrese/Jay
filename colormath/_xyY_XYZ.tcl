@@ -4,16 +4,46 @@
 
 # ::_xyY_XYZ
 #
-# Transform xyY channels into XYZ channels (both in the PCS D50 space).
+# Transform xyY colors (without alpha channel) into XYZ colors (without alpha channel).
+# Both in the PCS D50 space.
 #
 # Where:
 #
-# channels      Should be a list containing the xyY channels values to convert [0,1.0].
+# channels      Should be a list that specifies all the channels (flattened together) of the xyY colors to convert.
+#               Each xyY color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   x --> x [0,1.0]
+#                   y --> y [0,1.0]
+#                   Y --> Y [0,1.0]
 #
-# Returns a list containing the resulting XYZ channels, with:
-#   the X channels in the range [0,$sRGB(PCS,X)],
-#   the Y channels in the range [0,$sRGB(PCS,Y)],
-#   the Z channels in the range [0,$sRGB(PCS,Z)].
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
+#
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 1.0 0.5 0.7]
+#                       channels --> [list 1.0 0.5 0.7]
+#
+#                   Two colors:
+#                       color1   --> [list 1.0 0.5 0.7]
+#                       color2   --> [list 0.5 0.8 0.8]
+#                       channels --> [list 1.0 0.5 0.7 0.5 0.8 0.8] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 1.0 0.5 0.7]
+#                       color2   --> [list 0.5 0.8 0.8]
+#                       color3   --> [list 0.2 0.2 0.1]
+#                       channels --> [list 1.0 0.5 0.7 0.5 0.8 0.8 0.2 0.2 0.1] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Note:  For info about xyY to XYZ conversions visit 'http://www.brucelindbloom.com'.
+#
+# Return a list containing the resulting XYZ colors channels (flattened together).
+# Each XYZ color will be rappresented by 3 channels values in the following order and ranges:
+#   X --> X [0,$sRGB(PCS,X)]
+#   Y --> Y [0,$sRGB(PCS,Y)]
+#   Z --> Z [0,$sRGB(PCS,Z)]
 proc ::_xyY_XYZ { channels } {
     foreach { x y Y } $channels {
         if { $y == 0 } {
@@ -21,17 +51,11 @@ proc ::_xyY_XYZ { channels } {
             set Y 0
             set Z 0
         } else {
+            # Compute X [0,$sRGB(PCS,X)].
             set X [expr { ($x*$Y)/$y }]
+
+            # Compute Z [0,$sRGB(PCS,Z)].
             set Z [expr { ((1.0-$x-$y)*$Y)/$y }]
-
-            # Adjust the X and Z values if they exceeds the D50 PCS Whitepoint XYZ values.
-            if { $X > $sRGB(PCS,X) } {
-                set X $sRGB(PCS,X)
-            }
-
-            if { $Z > $sRGB(PCS,Z) } {
-                set Z $sRGB(PCS,Z)
-            }
         }
 
         lappend results $X $Y $Z
