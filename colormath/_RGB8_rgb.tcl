@@ -4,40 +4,51 @@
 
 # ::_RGB8_rgb
 #
-# Transform RGB channels at 8 bit into rgb channels.
+# Transform RGB colors at 8 bit (without alpha channel) into rgb colors (without alpha channel).
 #
 # Where:
 #
-# channels      Should be a list containing the RGB channels values to convert [0,255].
+# channels      Should be a list that specifies all the channels (flattened together) of the RGB colors at 8 bit to convert.
+#               Each RGB color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   R --> Red   [0,255]
+#                   G --> Green [0,255]
+#                   B --> Blue  [0,255]
 #
-# Note:  A pre-computation has been made in order to increase the performance:
-#           1.0 / 255.0 = 0.00392156862745098
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-# Returns a list containing the resulting rgb channels, with each channel in the range [0,1.0].
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 40 172 212]
+#                       channels --> [list 40 172 212]
+#
+#                   Two colors:
+#                       color1   --> [list 40 172 212]
+#                       color2   --> [list 57 65  65 ]
+#                       channels --> [list 40 172 212 57 65 65] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 40 172 212]
+#                       color2   --> [list 57 65  65 ]
+#                       color3   --> [list 23 212 120]
+#                       channels --> [list 40 172 212 57 65 65 23 212 120] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# A pre-computation has been made in order to increase the performance:
+#   1 / 255 = 0.00392156862745098
+#
+# Return a list containing the resulting rgb colors channels (flattened together).
+# Each rgb color will be rappresented by 3 channels values in the following order and ranges:
+#   r --> red   [0,1.0]
+#   g --> green [0,1.0]
+#   b --> blue  [0,1.0]
 proc ::_RGB8_rgb { channels } {
-    foreach { red green blue } $channels {
-        set r [expr { $red*0.00392156862745098 }]
-        set g [expr { $green*0.00392156862745098 }]
-        set b [expr { $blue*0.00392156862745098 }]
-
-        # Adjust the rgb channels values if they exceeds their limits [0,1.0].
-        if { $r < 0 } {
-            set r 0
-        } elseif { $r > 1.0 } {
-            set r 1.0
-        }
-
-        if { $g < 0 } {
-            set g 0
-        } elseif { $g > 1.0 } {
-            set g 1.0
-        }
-
-        if { $b < 0 } {
-            set b 0
-        } elseif { $b > 1.0 } {
-            set b 1.0
-        }
+    foreach { red8 green8 blue8 } $channels {
+        set r [expr { $red8*0.00392156862745098   }]
+        set g [expr { $green8*0.00392156862745098 }]
+        set b [expr { $blue8*0.00392156862745098  }]
 
         lappend results $r $g $b
     }
