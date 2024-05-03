@@ -4,26 +4,53 @@
 
 # ::_XYZ_Lab
 #
-# Transform XYZ channels into Lab channels (both in the PCS D50 space).
+# Transform XYZ colors (without alpha channel) into Lab colors (without alpha channel).
+# Both in the PCS D50 space.
 #
 # Where:
 #
-# channels      Should be a list containing the XYZ channels values to convert, with:
-#                   the X channels in the range [0,$sRGB(PCS,X)],
-#                   the Y channels in the range [0,$sRGB(PCS,Y)],
-#                   the Z channels in the range [0,$sRGB(PCS,Z)].
+# channels      Should be a list that specifies all the channels (flattened together) of the XYZ colors to convert.
+#               Each XYZ color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   X --> X [0,$sRGB(PCS,X)]
+#                   Y --> Y [0,$sRGB(PCS,Y)]
+#                   Z --> Z [0,$sRGB(PCS,Z)]
 #
-# Note:  Some pre-computation have been made in order to increase the performance:
-#           1.0/3.0       = 0.3333333333333333
-#           24389.0/27.0  = 903.2962962962963
-#           216.0/24389.0 = 0.008856451679035631
-#           1.0/116.0     = 0.008620689655172414
-#           16.0/116.0    = 0.13793103448275862
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-# Returns a list containing the resulting Lab channels, with:
-#   the L channels in the range [0,100.0],
-#   the a channels in the range [-128.0,127.0],
-#   the b channels in the range [-128.0,127.0].
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 0.4 0.5 0.2]
+#                       channels --> [list 0.4 0.5 0.2]
+#
+#                   Two colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       color3   --> [list 0.2 0.2 0.1]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6 0.2 0.2 0.1] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Some pre-computation have been made in order to increase the performance:
+#   1 / 3       = 0.3333333333333333
+#   1 / 116     = 0.008620689655172414
+#   16 / 116    = 0.13793103448275862
+#   216 / 24389 = 0.008856451679035631
+#   24389 / 27  = 903.2962962962963
+#
+# Note:  For info about XYZ to Lab conversions visit 'http://www.brucelindbloom.com'.
+#
+# Return a list containing the resulting Lab colors channels (flattened together).
+# Each Lab color will be rappresented by 3 channels values in the following order and ranges:
+#   L --> Lightness [0,100.0]
+#   a --> a         [-128.0,127.0]
+#   b --> b         [-128.0,127.0]
 proc ::_XYZ_Lab { channels } {
     switch -- $::CIE {
         standard {
@@ -68,33 +95,14 @@ proc ::_XYZ_Lab { channels } {
             set fz [expr { ($k*$zr*0.008620689655172414)+0.13793103448275862 }]
         }
 
-        ## Rounding to the 12th decimal position to avoid exponential result.
-        #set fx [round $fx 12]
-        #set fy [round $fy 12]
-        #set fz [round $fz 12]
-
+        # Compute the lightness [0,100.0].
         set L [expr { (116.0*$fy)-16.0 }]
+
+        # Compute a [-128.0,127.0].
         set a [expr { 500.0*($fx-$fy)  }]
+
+        # Compute b [-128.0,127.0].
         set b [expr { 200.0*($fy-$fz)  }]
-
-        # Adjust the Lab values if they exceeds their limits.
-        if { $L < 0 } {
-            set L 0
-        } elseif { $L > 100.0 } {
-            set L 100.0
-        }
-
-        if { $a < -128.0 } {
-            set a -128.0
-        } elseif { $a > 127.0 } {
-            set a 127.0
-        }
-
-        if { $b < -128.0 } {
-            set b -128.0
-        } elseif { $b > 127.0 } {
-            set b 127.0
-        }
 
         lappend results $L $a $b
     }
