@@ -4,30 +4,57 @@
 
 # ::_Lab_XYZ
 #
-# Transform Lab channels into XYZ channels (both in the PCS D50 space).
+# Transform Lab colors (without alpha channel) into XYZ colors (without alpha channel).
+# Both in the PCS D50 space.
 #
 # Where:
 #
-# channels      Should be a list containing the Lab channels values to convert, with:
-#                   the L channels in the range [0,100.0],
-#                   the a channels in the range [-128.0,127.0],
-#                   the b channels in the range [-128.0,127.0].
+# channels      Should be a list that specifies all the channels (flattened together) of the Lab colors to convert.
+#               Each Lab color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   L --> Lightness [0,100.0]
+#                   a --> a         [-128.0,127.0]
+#                   b --> b         [-128.0,127.0]
 #
-# Note:  Some pre-computation have been made in order to increase the performance:
-#           1.0/3.0       = 0.3333333333333333
-#           24389.0/27.0  = 903.2962962962963
-#           216.0/24389.0 = 0.008856451679035631
-#           1.0/116.0     = 0.008620689655172414
-#           16.0/116.0    = 0.13793103448275862
-#           1.0/200.0     = 0.005
-#           1.0/500.0     = 0.002
-#           1.0/903.3     = 0.0011070519207350825
-#           1.0/903.2962962962963 = 0.0011070564598794539
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-# Returns a list containing the resulting XYZ channels, with:
-#   the X channels in the range [0,$sRGB(PCS,X)],
-#   the Y channels in the range [0,$sRGB(PCS,Y)],
-#   the Z channels in the range [0,$sRGB(PCS,Z)].
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 100 -50 50]
+#                       channels --> [list 100 -50 50]
+#
+#                   Two colors:
+#                       color1   --> [list 100 -50 50]
+#                       color2   --> [list 57   80 80]
+#                       channels --> [list 100 -50 50 57 80 80] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 100 -50 50]
+#                       color2   --> [list 57   80 80]
+#                       color3   --> [list 23   20 12]
+#                       channels --> [list 100 -50 50 57 80 80 23 20 12] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Some pre-computation have been made in order to increase the performance:
+#   1 / 3                 = 0.3333333333333333
+#   1 / 116               = 0.008620689655172414
+#   1 / 200               = 0.005
+#   1 / 500               = 0.002
+#   1 / 903.2962962962963 = 0.0011070564598794539
+#   1 / 903.3             = 0.0011070519207350825
+#   16 / 116              = 0.13793103448275862
+#   216 / 24389           = 0.008856451679035631
+#   24389 / 27            = 903.2962962962963
+#
+# Note:  For info about Lab to XYZ conversions visit 'http://www.brucelindbloom.com'.
+#
+# Return a list containing the resulting XYZ colors channels (flattened together).
+# Each XYZ color will be rappresented by 3 channels values in the following order and ranges:
+#   X --> X [0,$sRGB(PCS,X)]
+#   Y --> Y [0,$sRGB(PCS,Y)]
+#   Z --> Z [0,$sRGB(PCS,Z)]
 proc ::_Lab_XYZ { channels } {
     switch -- $::CIE {
         standard {
@@ -37,7 +64,7 @@ proc ::_Lab_XYZ { channels } {
             # kepsilon = k * epsilon
             set j        0.0011070519207350825
             set epsilon  0.008856
-            set kepsilon 7.9996247999999985; # k * epsilon
+            set kepsilon 7.9996247999999985
         }
         intent {
             # k        = 903.2962962962963
@@ -86,8 +113,13 @@ proc ::_Lab_XYZ { channels } {
             set zr [expr { ((116.0*$Z)-16.0)*$j }]
         }
 
+        # Compute the X value [0,$sRGB(PCS,X)].
         set X [expr { $xr*$sRGB(PCS,X) }]
+
+        # Compute the Y value [0,$sRGB(PCS,Y)].
         set Y [expr { $yr*$sRGB(PCS,Y) }]
+
+        # Compute the Z value [0,$sRGB(PCS,Z)].
         set Z [expr { $zr*$sRGB(PCS,Z) }]
 
         lappend results $X $Y $Z
