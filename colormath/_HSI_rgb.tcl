@@ -4,35 +4,63 @@
 
 # ::_HSI_rgb
 #
-# Transform HSI channels into rgb channels.
+# Transform HSI colors (without alpha channel) into rgb colors (without alpha channel).
 #
 # Where:
 #
-# channels      Should be a list containing the HSI channels to convert, with:
-#                   the hue channel in the range [0,360[,
-#                   the saturation channel in the range [0,100.0],
-#                   the intensity channel in the range [0,100.0].
+# channels      Should be a list that specifies all the channels (flattened together) of the HSI colors to convert.
+#               Each HSI color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   H --> Hue        [0,360.0[ --> Note: '360.0' is not included.
+#                   S --> Saturation [0,100.0]
+#                   I --> Intensity  [0,100.0]
 #
-# Note:  Some pre-computation have been made in order to increase the performance:
-#           π/180.0   = 0.017453292519943295
-#           1.0/100.0 = 0.01
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-#           1.0471975511965976 = 60  degrees expressed in radians.
-#           2.0943951023931953 = 120 degrees expressed in radians.
-#           3.141592653589793  = 180 degrees expressed in radians.
-#           4.1887902047863905 = 240 degrees expressed in radians.
-#           5.235987755982989  = 300 degrees expressed in radians.
+#               Examples:
 #
-# Returns a list containing the resulting rgb channels, with each channel in the range [0,1.0].
+#                   One color:
+#                       color    --> [list 120 50 50]
+#                       channels --> [list 120 50 50]
+#
+#                   Two colors:
+#                       color1   --> [list 120 50 50]
+#                       color2   --> [list 57  80 80]
+#                       channels --> [list 120 50 50 57 80 80] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 120 50 50]
+#                       color2   --> [list 57  80 80]
+#                       color3   --> [list 270 20 90]
+#                       channels --> [list 120 50 50 57 80 80 270 20 90] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Some pre-computation have been made in order to increase the performance:
+#   1 / 100 = 0.01
+#   π / 180 = 0.017453292519943295
+#
+#   1.0471975511965976 = 60  degrees expressed in radians.
+#   2.0943951023931953 = 120 degrees expressed in radians.
+#   3.141592653589793  = 180 degrees expressed in radians.
+#   4.1887902047863905 = 240 degrees expressed in radians.
+#   5.235987755982989  = 300 degrees expressed in radians.
+#
+# Return a list containing the resulting rgb colors channels (flattened together).
+# Each rgb color will be rappresented by 3 channels values in the following order and ranges:
+#   r --> red   [0,1.0]
+#   g --> green [0,1.0]
+#   b --> blue  [0,1.0]
 proc ::_HSI_rgb { channels } {
     foreach { hue saturation intensity } $channels {
-        set s  [expr { $saturation*0.01 }]; # [0,1.0]
-        set i  [expr { $intensity*0.01 }]; # [0,1.0]
+        set s  [expr { $saturation*0.01 }]; # range [0,1.0]
+        set i  [expr { $intensity*0.01  }]; # range [0,1.0]
 
         set k0 [expr { $i*$s }]
         set k1 [expr { $i-$k0 }]
         set k2 [expr { 2.0*$k0 }]
 
+        # Compute the rgb values [0,1.0].
         if { $hue == 0 } {
             set r [expr { $i+$k2 }]
             set g $k1
@@ -69,25 +97,6 @@ proc ::_HSI_rgb { channels } {
             set r [expr { $i-($k0*(1.0-$interim)) }]
             set g $k1
             set b [expr { $i+($k2*$interim) }]
-        }
-
-        # Adjust the rgb channels values if they exceeds their limits [0,1.0].
-        if { $r < 0 } {
-            set r 0
-        } elseif { $r > 1.0 } {
-            set r 1.0
-        }
-
-        if { $g < 0 } {
-            set g 0
-        } elseif { $g > 1.0 } {
-            set g 1.0
-        }
-
-        if { $b < 0 } {
-            set b 0
-        } elseif { $b > 1.0 } {
-            set b 1.0
         }
 
         lappend results $r $g $b
