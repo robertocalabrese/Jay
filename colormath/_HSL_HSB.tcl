@@ -4,27 +4,51 @@
 
 # ::_HSL_HSB
 #
-# Transform HSL channels into HSB channels.
+# Transform HSL colors (without alpha channel) into HSB colors (without alpha channel).
 #
 # Where:
 #
-# channels      Should be a list containing the HSL channels to convert, with:
-#                   the hue channel in the range [0,360[,
-#                   the saturation channel in the range [0,100.0],
-#                   the lightness channel in the range [0,100.0].
+# channels      Should be a list that specifies all the channels (flattened together) of the HSL colors to convert.
+#               Each HSL color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   H --> Hue        [0,360.0[ --> Note: '360.0' is not included.
+#                   S --> Saturation [0,100.0]
+#                   L --> Lightness  [0,100.0]
 #
-# Note:  Some pre-computation have been made in order to increase the performance:
-#           1.0/6.0   = 0.16666666666666666
-#           1.0/100.0 = 0.01
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-# Returns a list containing the resulting HSB channels, with:
-#   the hue channels in the range [0,360[,
-#   the saturation channels in the range [0,100.0],
-#   the brightness channels in the range [0,100.0].
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 120 50 50]
+#                       channels --> [list 120 50 50]
+#
+#                   Two colors:
+#                       color1   --> [list 120 50 50]
+#                       color2   --> [list 57  80 80]
+#                       channels --> [list 120 50 50 57 80 80] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 120 50 50]
+#                       color2   --> [list 57  80 80]
+#                       color3   --> [list 270 20 90]
+#                       channels --> [list 120 50 50 57 80 80 270 20 90] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Some pre-computation have been made in order to increase the performance:
+#   1 / 6   = 0.16666666666666666
+#   1 / 100 = 0.01
+#
+# Return a list containing the resulting HSB colors channels (flattened together).
+# Each HSB color will be rappresented by 3 channels values in the following order and ranges:
+#   H --> Hue        [0,360.0[ --> Note: '360.0' is not included.
+#   S --> Saturation [0,100.0]
+#   B --> Brightness [0,100.0]
 proc ::_HSL_HSB { channels } {
     foreach { hue saturation lightness } $channels {
-        set s [expr { $saturation*0.01 }]; # [0,1.0]
-        set l [expr { $lightness*0.01 }]; # [0,1.0]
+        set s [expr { $saturation*0.01 }]; # range [0,1.0]
+        set l [expr { $lightness*0.01  }]; # range [0,1.0]
 
         set absVal [expr { abs((2*$l)-1.0) }]
         set c      [expr { (1.0-$absVal)*$s }]
@@ -35,7 +59,7 @@ proc ::_HSL_HSB { channels } {
         set x      [expr { $c*(1.0-$absVal) }]
         set m      [expr { $l-($c*0.5) }]
 
-        # Compute the rgb values.
+        # Compute the rgb values [0,1.0].
         if { $hue < 60.0 } {
             set r [expr { $c+$m }]
             set g [expr { $x+$m }]
@@ -62,25 +86,6 @@ proc ::_HSL_HSB { channels } {
             set b [expr { $x+$m }]
         }
 
-        # Adjust the rgb channels values if they exceeds their limits [0,1.0].
-        if { $r < 0 } {
-            set r 0
-        } elseif { $r > 1.0 } {
-            set r 1.0
-        }
-
-        if { $g < 0 } {
-            set g 0
-        } elseif { $g > 1.0 } {
-            set g 1.0
-        }
-
-        if { $b < 0 } {
-            set b 0
-        } elseif { $b > 1.0 } {
-            set b 1.0
-        }
-
         set min  [expr { min($r,$g,$b) }]
         set max  [expr { max($r,$g,$b) }]
         set diff [expr { $max-$min }]
@@ -88,30 +93,14 @@ proc ::_HSL_HSB { channels } {
         # Compute the brightness [0,100.0].
         set brightness [expr { $max*100.0 }]
 
-        # Adjust the brightness value if exceeds its limits [0,100.0].
-        if { $brightness < 0 } {
-            set brightness 0
-        } elseif { $brightness > 100.0 } {
-            set brightness 100.0
-        }
-
+        # Compute the saturation [0,100.0].
         switch -- $diff {
             0   {
                 # It's a gray...
                 set hue        0
                 set saturation 0
             }
-            default {
-                # Compute the saturation [0,100.0].
-                set saturation [expr { ($diff/$max)*100.0 }]
-
-                # Adjust the saturation value if exceeds its limits [0,100.0].
-                if { $saturation < 0 } {
-                    set saturation 0
-                } elseif { $saturation > 100.0 } {
-                    set saturation 100.0
-                }
-            }
+            default { set saturation [expr { ($diff/$max)*100.0 }] }
         }
 
         lappend results $hue $saturation $brightness
