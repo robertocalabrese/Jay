@@ -4,23 +4,53 @@
 
 # ::_RGB8_RGB16
 #
-# Transform RGB channels at 8 bit into RGB channels at 16 bit.
+# Transform RGB colors at 8 bit (without alpha channel) into RGB colors at 16 bit (without alpha channel).
 #
 # Where:
 #
-# channels      Should be a list containing the RGB channels values to convert [0,255].
+# channels      Should be a list that specifies all the channels (flattened together) of the RGB colors at 8 bit to convert.
+#               Each RGB color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   R --> Red   [0,255]
+#                   G --> Green [0,255]
+#                   B --> Blue  [0,255]
 #
-# Note:  A pre-computation has been made in order to increase the performance:
-#           65535.0 / 255.0  = 257.0
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
 #
-# Returns a list containing the resulting RGB channels, with each channel in the range [0,65535].
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 40 172 212]
+#                       channels --> [list 40 172 212]
+#
+#                   Two colors:
+#                       color1   --> [list 40 172 212]
+#                       color2   --> [list 57 65  65 ]
+#                       channels --> [list 40 172 212 57 65 65] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 40 172 212]
+#                       color2   --> [list 57 65  65 ]
+#                       color3   --> [list 23 212 120]
+#                       channels --> [list 40 172 212 57 65 65 23 212 120] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# A pre-computation has been made in order to increase the performance:
+#   65535 / 255 = 257
+#
+# Return a list containing the resulting RGB colors channels (flattened together) at 16 bit.
+# Each RGB color will be rappresented by 3 channels values in the following order and ranges:
+#   R --> Red   [0,65535]
+#   G --> Green [0,65535]
+#   B --> Blue  [0,65535]
 proc ::_RGB8_RGB16 { channels } {
-    foreach { red green blue } $channels {
-        set red   [expr { $red*257 }]
-        set green [expr { $green*257 }]
-        set blue  [expr { $blue*257 }]
+    foreach { red8 green8 blue8 } $channels {
+        set red16   [expr { $red8*257   }]
+        set green16 [expr { $green8*257 }]
+        set blue16  [expr { $blue8*257  }]
 
-        lappend results $red $green $blue
+        lappend results $red16 $green16 $blue16
     }
 
     return $results
