@@ -4,39 +4,50 @@
 
 # ::_rgb_RGB16
 #
-# Transform rgb channels into RGB channels at 16 bit.
+# Transform rgb colors (without alpha channel) into RGB values at 16 bit (without alpha channel).
 #
 # Where:
 #
-# channels      Should be a list containing the rgb channels values to convert [0,1.0].
+# channels      Should be a list that specifies all the channels (flattened together) of the rgb colors to convert.
+#               Each rgb color needs to be rappresented by 3 channels values in the following order and ranges:
+#                   r --> red   [0,1.0]
+#                   g --> green [0,1.0]
+#                   b --> blue  [0,1.0]
 #
-# Returns a list containing the resulting RGB channels, with each channel in the range [0,65535].
+#               Attention, the input and output colors will not be checked.
+#               Please, take the appropriate steps before and after using this procedure or use the color command instead.
+#
+#               Examples:
+#
+#                   One color:
+#                       color    --> [list 0.4 0.5 0.2]
+#                       channels --> [list 0.4 0.5 0.2]
+#
+#                   Two colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6] <-- all colors channels must be flattened together.
+#
+#                   Three colors:
+#                       color1   --> [list 0.4 0.5 0.2]
+#                       color2   --> [list 0.5 0.4 0.6]
+#                       color3   --> [list 0.2 0.2 0.1]
+#                       channels --> [list 0.4 0.5 0.2 0.5 0.4 0.6 0.2 0.2 0.1] <-- all colors channels must be flattened together.
+#
+#                   and so on and so forth...
+#
+# Return a list containing the resulting RGB colors channels (flattened together) at 16 bit.
+# Each RGB color will be rappresented by 3 channels values in the following order and ranges:
+#   R --> Red   [0,65535]
+#   G --> Green [0,65535]
+#   B --> Blue  [0,65535]
 proc ::_rgb_RGB16 { channels } {
     foreach { r g b } $channels {
-        set red   [expr { round($r*65535.0) }]
-        set green [expr { round($g*65535.0) }]
-        set blue  [expr { round($b*65535.0) }]
+        set red16   [expr { round($r*65535.0) }]
+        set green16 [expr { round($g*65535.0) }]
+        set blue16  [expr { round($b*65535.0) }]
 
-        # Adjust the RGB channels values if they exceeds their limits [0,65535].
-        if { $red < 0 } {
-            set red 0
-        } elseif { $red > 65535 } {
-            set red 65535
-        }
-
-        if { $green < 0 } {
-            set green 0
-        } elseif { $green > 65535 } {
-            set green 65535
-        }
-
-        if { $blue < 0 } {
-            set blue 0
-        } elseif { $blue > 65535 } {
-            set blue 65535
-        }
-
-        lappend results $red $green $blue
+        lappend results $red16 $green16 $blue16
     }
 
     return $results
