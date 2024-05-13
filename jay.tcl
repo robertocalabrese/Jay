@@ -222,7 +222,7 @@ proc ::Jay::init {} {
     set ::NOTIFICATIONS "enabled"
 
     # It's a list that specifies all the available palettes.
-    set ::PALETTES [list ]
+    set ::PALETTES [list ALL]
 
     # It's a boolean that specifies the popups state.
     #
@@ -619,10 +619,30 @@ proc ::Jay::init {} {
     interp bgerror {} ::_BG_ERROR
 
     # Load the palette files.
+    # The developer may add as many palettes as he/she wants.
+    # Remember that color names should be unique and thus when Jay is checking/retrieving a color name,
+    # it will stop/take the very first match it founds (the palettes are checked in alphabetical order),
+    # even if there are more matches.
     set paths [glob -type f -nocomplain -directory [file join $::JAY_DIR palettes] -- *.txt]
     switch -- $paths {
         ""      { ::_FATAL_ERROR [list "There are no palettes available."] }
         default {
+            # Initialize the color list relative to all palettes.
+            set palettes_all         [list ]
+            set palettes_gray        [list ]
+            set palettes_red         [list ]
+            set palettes_orange      [list ]
+            set palettes_yellow      [list ]
+            set palettes_yellowgreen [list ]
+            set palettes_green       [list ]
+            set palettes_greencyan   [list ]
+            set palettes_cyan        [list ]
+            set palettes_cyanblue    [list ]
+            set palettes_blue        [list ]
+            set palettes_bluepurple  [list ]
+            set palettes_purple      [list ]
+            set palettes_purplered   [list ]
+
             # Load what is supposed to be a palette file.
             foreach path $paths {
                 set palette [file rootname [file tail $path]]
@@ -644,20 +664,21 @@ proc ::Jay::init {} {
                     set hexlist_16  [list ]
                     set families    [list ]
 
-                    set all         [list ]
-                    set gray        [list ]
-                    set red         [list ]
-                    set orange      [list ]
-                    set yellow      [list ]
-                    set yellowgreen [list ]
-                    set green       [list ]
-                    set greencyan   [list ]
-                    set cyan        [list ]
-                    set cyanblue    [list ]
-                    set blue        [list ]
-                    set bluepurple  [list ]
-                    set purple      [list ]
-                    set purplered   [list ]
+                    # Initialize the color list relative to a single palette.
+                    set palette_all         [list ]
+                    set palette_gray        [list ]
+                    set palette_red         [list ]
+                    set palette_orange      [list ]
+                    set palette_yellow      [list ]
+                    set palette_yellowgreen [list ]
+                    set palette_green       [list ]
+                    set palette_greencyan   [list ]
+                    set palette_cyan        [list ]
+                    set palette_cyanblue    [list ]
+                    set palette_blue        [list ]
+                    set palette_bluepurple  [list ]
+                    set palette_purple      [list ]
+                    set palette_purplered   [list ]
 
                     # Scan the file content line by line.
                     foreach line $file_content {
@@ -685,13 +706,12 @@ proc ::Jay::init {} {
                                 }
 
                                 # Check the color hexadecimal values.
+                                set channels 3
+                                set fallback INVALID
                                 foreach { value depth } [list  $hex8 8 \
                                                               $hex12 12 \
                                                               $hex16 16] {
-                                    set value  [::_CHECK_COLOR     $value \
-                                                                   -depth $depth \
-                                                                -fallback INVALID \
-                                                                 -palette ON_ALL_PALETTES];
+                                    set value  [::_CHECK_HEX $value $channel $depth $fallback]
                                     switch -- $value {
                                         INVALID {
                                             set reject true
@@ -728,45 +748,58 @@ proc ::Jay::init {} {
                                     }
                                 }
 
-                                # Add the palette color in its relative palette family list.
-                                lappend $family $colorname
+                                # Add colorname to its relative family list (for the current palette).
+                                lappend [string cat "palette_" $family] $colorname
 
-                                # Add the palette color to the available palette color names list.
-                                lappend all $colorname
+                                # Add colorname to its relative family list (for all palettes).
+                                lappend [string cat "palettes_" $family] $colorname
+
+                                # Add colorname to the ones available for the current palette.
+                                lappend palette_all $colorname
+
+                                # Add colorname to the ones available for all palettes.
+                                lappend palettes_all $colorname
                             }
                         }
                     }
 
                     switch -- $reject {
                         false {
-                            # Register the palette into the available palettes.
+                            # Register the palette into the available ones.
                             lappend ::PALETTES $palette
 
                             # Register the palette data.
                             set i 0
                             foreach colorname $colornames {
+                                # ...for the current palette.
                                 dict set ::TABLE(palette,$palette) colorname $colorname 8      [lindex $hexlist_8  $i]
                                 dict set ::TABLE(palette,$palette) colorname $colorname 12     [lindex $hexlist_12 $i]
                                 dict set ::TABLE(palette,$palette) colorname $colorname 16     [lindex $hexlist_16 $i]
                                 dict set ::TABLE(palette,$palette) colorname $colorname family [lindex $families   $i]
+
+                                # ...for all palettes.
+                                dict set ::TABLE(palette,ALL)      colorname $colorname 8      [lindex $hexlist_8  $i]
+                                dict set ::TABLE(palette,ALL)      colorname $colorname 12     [lindex $hexlist_12 $i]
+                                dict set ::TABLE(palette,ALL)      colorname $colorname 16     [lindex $hexlist_16 $i]
+                                dict set ::TABLE(palette,ALL)      colorname $colorname family [lindex $families   $i]
                                 incr i
                             }
 
-                            # Register the palette families list.
-                            dict set ::TABLE(palette,$palette) family all          $all
-                            dict set ::TABLE(palette,$palette) family gray         $gray
-                            dict set ::TABLE(palette,$palette) family red          $red
-                            dict set ::TABLE(palette,$palette) family orange       $orange
-                            dict set ::TABLE(palette,$palette) family yellow       $yellow
-                            dict set ::TABLE(palette,$palette) family yellowgreen  $yellowgreen
-                            dict set ::TABLE(palette,$palette) family green        $green
-                            dict set ::TABLE(palette,$palette) family greencyan    $greencyan
-                            dict set ::TABLE(palette,$palette) family cyan         $cyan
-                            dict set ::TABLE(palette,$palette) family cyanblue     $cyanblue
-                            dict set ::TABLE(palette,$palette) family blue         $blue
-                            dict set ::TABLE(palette,$palette) family bluepurple   $bluepurple
-                            dict set ::TABLE(palette,$palette) family purple       $purple
-                            dict set ::TABLE(palette,$palette) family purplered    $purplered
+                            # Register all the available colornames by family (for the current palette).
+                            dict set ::TABLE(palette,$palette) family all          $palette_all
+                            dict set ::TABLE(palette,$palette) family gray         $palette_gray
+                            dict set ::TABLE(palette,$palette) family red          $palette_red
+                            dict set ::TABLE(palette,$palette) family orange       $palette_orange
+                            dict set ::TABLE(palette,$palette) family yellow       $palette_yellow
+                            dict set ::TABLE(palette,$palette) family yellowgreen  $palette_yellowgreen
+                            dict set ::TABLE(palette,$palette) family green        $palette_green
+                            dict set ::TABLE(palette,$palette) family greencyan    $palette_greencyan
+                            dict set ::TABLE(palette,$palette) family cyan         $palette_cyan
+                            dict set ::TABLE(palette,$palette) family cyanblue     $palette_cyanblue
+                            dict set ::TABLE(palette,$palette) family blue         $palette_blue
+                            dict set ::TABLE(palette,$palette) family bluepurple   $palette_bluepurple
+                            dict set ::TABLE(palette,$palette) family purple       $palette_purple
+                            dict set ::TABLE(palette,$palette) family purplered    $palette_purplered
                         }
                         true { puts stdout "'$palette' palette rejected. Ignoring." }
                     }
@@ -777,6 +810,25 @@ proc ::Jay::init {} {
             switch -- $::PALETTES {
                 ""  { ::_FATAL_ERROR [list "No palettes were found or all have been rejected."] }
             }
+
+            # Register all the available colornames by family (for all palettes).
+            dict set ::TABLE(palette,ALL) family all          $palettes_all
+            dict set ::TABLE(palette,ALL) family gray         $palettes_gray
+            dict set ::TABLE(palette,ALL) family red          $palettes_red
+            dict set ::TABLE(palette,ALL) family orange       $palettes_orange
+            dict set ::TABLE(palette,ALL) family yellow       $palettes_yellow
+            dict set ::TABLE(palette,ALL) family yellowgreen  $palettes_yellowgreen
+            dict set ::TABLE(palette,ALL) family green        $palettes_green
+            dict set ::TABLE(palette,ALL) family greencyan    $palettes_greencyan
+            dict set ::TABLE(palette,ALL) family cyan         $palettes_cyan
+            dict set ::TABLE(palette,ALL) family cyanblue     $palettes_cyanblue
+            dict set ::TABLE(palette,ALL) family blue         $palettes_blue
+            dict set ::TABLE(palette,ALL) family bluepurple   $palettes_bluepurple
+            dict set ::TABLE(palette,ALL) family purple       $palettes_purple
+            dict set ::TABLE(palette,ALL) family purplered    $palettes_purplered
+
+            # Order the palettes alphabetically.
+            set ::PALETTES [lsort -increasing -dictionary $::PALETTES]
         }
     }
 
@@ -797,9 +849,8 @@ proc ::Jay::init {} {
 ######################################################################
 
 # Note:  Each proc name will always start with the underline character.
-#        Each word after the underline must be all in capital letters and
-#        their last characters should also be the underline character,
-#        unless they are the last words of the proc names.
+#        Each word of the proc name must be in capital letters.
+#        To connect two words the underline character must be used.
 #
 #        Each of these procedures are independant. They do their stuff in 'house'.
 #        You may consider them as the smallest bricks in Jay.
@@ -815,28 +866,27 @@ proc ::Jay::init {} {
 #
 # Where:
 #
-# string        Should be the string to align.
+# STRING        Should be the string to align.
 #
 # maxLength     Should be a positive integer that specifies the maximum length allowed for the string.
 #
 # gap           Should be a positive integer that specifies the column distancer (in space characters).
-#
 #               If not provided, defaults to '3'.
 #
-# Returns the new aligned string, ready to be used.
-proc ::_ALIGN_STRING_TO_COLUMN { string maxLength { gap 3 } } {
+# Return the new aligned string, ready to be used.
+proc ::_ALIGN_STRING_TO_COLUMN { STRING maxLength { gap 3 } } {
     if { [string is integer -strict $maxlength] && ( $maxlength > 0 ) } {
         if { [string is integer -strict $gap] && ( $gap > 0 ) } {
             set i 0
-            set limit [expr { $maxLength+$gap-[string length $string] }]
+            set limit [expr { $maxLength+$gap-[string length $STRING] }]
             while { $i < $limit } {
-                append string " "
+                append STRING " "
                 incr i
             }
         }
     }
 
-    return $string
+    return $STRING
 }
 
 ## _CENTER_ON_THE_SCREEN
@@ -845,9 +895,7 @@ proc ::_ALIGN_STRING_TO_COLUMN { string maxLength { gap 3 } } {
 #
 # Where:
 #
-# w         Should be the window address (a toplevel address) to be centered.
-#
-# Note:     This procedure is for internal use only and was not crafted to be used by the Developer directly.
+# w         Should be the toplevel address to be centered.
 #
 # It doesn't return anything.
 proc ::_CENTER_ON_THE_SCREEN { w } {
@@ -880,365 +928,313 @@ proc ::_CENTER_ON_THE_SCREEN { w } {
     wm geometry $w [string cat $width "x" $height "+" $x "+" "$y"]
 }
 
-## _CHECK_COLOR
+## _CHECK_HEX
 #
-# Validates a color in hexadecimal or textual form.
+# Validate a color expressed in hexadecimal form.
+#
+# IMPORTANT:    For performance reasons this procedure will not check its input values.
+#               If you are planning to use this procedure directly into your code (without calling the color command),
+#               be sure to check the input channels and depth before calling this procedure.
 #
 # Where:
 #
-# color         Should be the color to validate, expressed in textual form (like red, green, blue, purple, orange,...),
-#               in hexadecimal form (at 8, 12 or 16 bits, with or without the '#') or as a system color name.
-#               See the 'Palettes' manual page to know which colornames and system color names are allowed.
-#               Alpha channels (trasparency) are supported only in hexadecimal form.
+# color         Should be the color to validate, expressed in hexadecimal form at 8, 12 or 16 bits, with or without the '#'.
+#               Alpha channels are supported.
 #
-# args          Optional. Should be a list of option/value pair.
-#               Allowed options are:
+# channels      Should be an integer value that specifies the number of channels in which the color will be provided.
+#               Allowed values are:
+#                   3   --> without alpha channel
+#                   4   --> with alpha channel
 #
-#                   depth         Should be an integer value indicating the bit depth in which the color should be validated.
+#               If an hexadecimal color is specified with a number of channels different than the channels provided
+#               (but '3' or '4' nonetheless), the alpha channel will be added or subtracted, to reflect the channels
+#               value specified.
 #
-#                                 Allowed values are:
-#                                     8   --> Both colornames and hexadecimal colors will be evaluated as 8 bit.
-#                                             Shortforms will be translated in their longform equivalent at 8 bit depth.
+# depth         Should be an integer value indicating the bit depth of the colors provided.
+#               Allowed values are:
+#                   8   --> 8  bit
+#                   12  --> 10 bit
+#                   16  --> 16 bit
 #
-#                                     12  --> Both colornames and hexadecimal colors will be evaluated as 12 bit.
-#                                             Shortforms will be translated in their longform equivalent at 12 bit depth.
+# fallback      Should be a string that specifies the fallback value to return if the color provided is invalid.
 #
-#                                     16  --> Both colornames and hexadecimal colors will be evaluated as 16 bit.
-#                                             Shortforms will be translated in their longform equivalent at 16 bit depth.
-#
-#                                 If not provided, defaults to the current '::DEPTH' value.
-#
-#                   fallback      Should be the fallback value to return if the color is invalid.
-#
-#                                 If not provided, defaults to 'INVALID'.
-#
-#                   palette       Should be the name of a valid color palette or the word 'ON_ALL_PALETTES' to search
-#                                 the color provided on all palettes known by Jay.
-#                                 See the 'Palettes' manual page to know which palettes names are allowed.
-#
-#                                 Note:  It's only meaningfull if colors are expressed in textual forms.
-#
-#                                 Note:  Palette's names are case sensitive.
-#
-#                                 If not provided defaults to 'ON_ALL_PALETTES'.
-#
-#               Unknown or wrong options will be ignored.
-#
-# Returns the checked color (in its longform, with or without the alpha channel) or the fallback value.
-proc ::_CHECK_COLOR { color args } {
-    set depth     $::DEPTH
-    set fallback  INVALID
-    set palette   ON_ALL_PALETTES
-
-    # Checks that 'args' is a valid option/value list.
-    switch -- [expr { [llength $args]%2 }] {
-        0   {
-            # Removes any duplicate options, retains the last one.
-            set args [lsort -stride 2 -index 0 -unique $args]
-
-            # Checks the options provided.
-            foreach { option value } $args {
-                # Ignore unknown or wrong options.
-                switch -nocase -- $option {
-                    -depth {
-                        switch -- $value {
-                            8   -
-                            12  -
-                            16  { set depth  $value }
-                        }
-                    }
-                    -fallback { set fallback $value }
-                    -palette  {
-                        switch -- $value {
-                            "ON_ALL_PALETTES" {}
-                            default {
-                                if { $value in $::PALETTES } {
-                                    set palette $value
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    # Perform a complex validation.
-    #   Check if the color provided is a valid hexadecimal value.
-    #       If it is    --> Check if it's a valid color value (in short or longform).
-    #       If it's not --> Check if it's a known colorname for the palette provided.
-    #   Return the color longform if it's a valid color, or the fallback value if it's not.
+# Return the validated color in its hexadecimal longform or its fallback value.
+proc ::_CHECK_HEX { color channels depth fallback } {
+    # Check the hexadecimal color.
     set color [string trimleft $color "#"]
-    switch -- $depth {
-        8   {
-            switch -- [string is xdigit -strict $color] {
-                0   {
-                    # Check if it's a system color.
-                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
-                    switch -- $index {
-                        -1      {}
-                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
-                    }
-
-                    switch -- $palette {
-                        ON_ALL_PALETTES {
-                            # Check inside all the registered palettes.
-                            foreach palette $::PALETTES {
-                                set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                                set index [lsearch -exact -nocase $colornames $color]
-                                switch -- $index {
-                                    -1      { continue }
-                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 8] }
-                                }
-                            }
-
-                            return $fallback
-                        }
-                        default {
-                            # Check inside the palette provided.
-                            set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                            set index [lsearch -exact -nocase $colornames $color]
-                            switch -- $index {
-                                -1      { return $fallback }
-                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 8] }
-                            }
-                        }
-                    }
-                }
-                1   {
+    switch -- [string is xdigit -strict $color] {
+        1   {
+            switch -- $depth {
+                8   {
                     switch -- [string length $color] {
                         3   {
-                            # It's a valid hexadecimal shortform value (without its alpha channel).
+                            # Get the channels shortform values.
                             set red   [string index $color 0]
                             set green [string index $color 1]
                             set blue  [string index $color 2]
 
-                            # Translate the color in its longform at 8 bits.
-                            return [string cat "#" \
-                                               $red   $red \
-                                               $green $green \
-                                               $blue  $blue];
+                            # Expand the shortform into a longform.
+                            switch -- $channels {
+                                3   {
+                                    return [string cat "#" \
+                                                       $red   $red \
+                                                       $green $green \
+                                                       $blue  $blue];
+                                }
+                                4   {
+                                    # Add the alpha channel ('FF').
+                                    set alpha_channel "F"
+
+                                    return [string cat "#" \
+                                                       $red           $red \
+                                                       $green         $green \
+                                                       $blue          $blue \
+                                                       $alpha_channel $alpha_channel];
+                                }
+                            }
                         }
                         4   {
-                            # It's a valid hexadecimal shortform value (with its alpha channel).
+                            # Get the channels shortform values.
                             set red   [string index $color 0]
                             set green [string index $color 1]
                             set blue  [string index $color 2]
-                            set alfa  [string index $color 3]
+                            set alpha [string index $color 3]
 
-                            # Translate the color in its longform at 8 bits.
-                            return [string cat "#" \
-                                               $red   $red \
-                                               $green $green \
-                                               $blue  $blue \
-                                               $alpha $alpha];
+                            # Expand the shortform into a longform.
+                            switch -- $channels {
+                                3   {
+                                    # Remove the alpha channel.
+                                    return [string cat "#" \
+                                                       $red   $red \
+                                                       $green $green \
+                                                       $blue  $blue];
+                                }
+                                4   {
+                                    # Retain the alpha channel.
+                                    return [string cat "#" \
+                                                       $red   $red \
+                                                       $green $green \
+                                                       $blue  $blue \
+                                                       $alpha $alpha];
+                                }
+                            }
                         }
                         6   {
-                            # It's a valid hexadecimal longform value at 8 bits (without its alpha channel).
-                            return [string cat "#" $color]
+                            switch -- $channels {
+                                3   { return [string cat "#" $color] }
+                                4   {
+                                    # Add the alpha channel.
+                                    set alpha_channel "FF"
+
+                                    return [string cat "#" $color $alpha_channel]
+                                }
+                            }
                         }
                         8   {
-                            # It's a valid hexadecimal longform value at 8 bits (with its alpha channel).
-                            return [string cat "#" $color]
-                        }
-                        default {
-                            # It's an invalid hexadecimal value.
-                            return $fallback
-                        }
-                    }
-                }
-            }
-        }
-        12  {
-            switch -- [string is xdigit -strict $color] {
-                0   {
-                    # Check if it's a system color.
-                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
-                    switch -- $index {
-                        -1      {}
-                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
-                    }
-
-                    switch -- $palette {
-                        ON_ALL_PALETTES {
-                            # Check inside all the registered palettes.
-                            foreach palette $::PALETTES {
-                                set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                                set index [lsearch -exact -nocase $colornames $color]
-                                switch -- $index {
-                                    -1      { continue }
-                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 12] }
+                            switch -- $channels {
+                                3   {
+                                    # Remove the alpha channel.
+                                    return [string cat "#" [string range $color 0 end-2]]
+                                }
+                                4   {
+                                    # Retain the alpha channel.
+                                    return [string cat "#" $color]
                                 }
                             }
-
-                            return $fallback
-                        }
-                        default {
-                            # Check inside the palette provided.
-                            set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                            set index [lsearch -exact -nocase $colornames $color]
-                            switch -- $index {
-                                -1      { return $fallback }
-                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 12] }
-                            }
                         }
                     }
                 }
-                1   {
-                    switch -- [string length $color] {
-                        3   {
-                            # It's a valid hexadecimal shortform value (without its alpha channel).
-                            set red   [string index $color 0]
-                            set green [string index $color 1]
-                            set blue  [string index $color 2]
+                12  {
+                    switch -- [string is xdigit -strict $color] {
+                        1   {
+                            switch -- [string length $color] {
+                                3   {
+                                    # Get the channels shortform values.
+                                    set red   [string index $color 0]
+                                    set green [string index $color 1]
+                                    set blue  [string index $color 2]
 
-                            # Translate the color in its longform at 12 bits.
-                            return [string cat "#" \
-                                               $red   $red   $red \
-                                               $green $green $green \
-                                               $blue  $blue  $blue];
-                        }
-                        4   {
-                            # It's a valid hexadecimal shortform value (with its alpha channel).
-                            set red   [string index $color 0]
-                            set green [string index $color 1]
-                            set blue  [string index $color 2]
-                            set alfa  [string index $color 3]
+                                    # Expand the shortform into a longform.
+                                    switch -- $channels {
+                                        3   {
+                                            return [string cat "#" \
+                                                               $red   $red   $red \
+                                                               $green $green $green \
+                                                               $blue  $blue  $blue];
+                                        }
+                                        4   {
+                                            # Add the alpha channel.
+                                            set alpha_channel "F"
 
-                            # Translate the color in its longform at 12 bits.
-                            return [string cat "#" \
-                                               $red   $red   $red \
-                                               $green $green $green \
-                                               $blue  $blue  $blue \
-                                               $alpha $alpha $alpha];
-                        }
-                        9   {
-                            # It's a valid hexadecimal longform value at 12 bits(without its alpha channel).
-                            return [string cat "#" $color]
-                        }
-                        12  {
-                            # It's a valid hexadecimal longform value at 12 bits(with its alpha channel).
-                            return [string cat "#" $color]
-                        }
-                        default {
-                            # It's an invalid hexadecimal value.
-                            return $fallback
-                        }
-                    }
-                }
-            }
-        }
-        16  {
-            switch -- [string is xdigit -strict $color] {
-                0   {
-                    # Check if it's a system color.
-                    set index [lsearch -exact -nocase $::SYSTEM_COLORNAMES $color]
-                    switch -- $index {
-                        -1      {}
-                        default { return [lindex $::SYSTEM_COLORNAMES $index] }
-                    }
+                                            return [string cat "#" \
+                                                               $red           $red           $red \
+                                                               $green         $green         $green \
+                                                               $blue          $blue          $blue \
+                                                               $alpha_channel $alpha_channel $alpha_channel];
+                                        }
+                                    }
+                                }
+                                4   {
+                                    # Get the channels shortform values.
+                                    set red   [string index $color 0]
+                                    set green [string index $color 1]
+                                    set blue  [string index $color 2]
+                                    set alpha [string index $color 3]
 
-                    switch -- $palette {
-                        ON_ALL_PALETTES {
-                            # Check inside all the registered palettes.
-                            foreach palette $::PALETTES {
-                                set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                                set index [lsearch -exact -nocase $colornames $color]
-                                switch -- $index {
-                                    -1      { continue }
-                                    default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 16] }
+                                    # Expand the shortform into a longform.
+                                    switch -- $channels {
+                                        3   {
+                                            # Remove the alpha channel.
+                                            return [string cat "#" \
+                                                               $red   $red   $red \
+                                                               $green $green $green \
+                                                               $blue  $blue  $blue];
+                                        }
+                                        4   {
+                                            # Retain the alpha channel.
+                                            return [string cat "#" \
+                                                               $red   $red   $red \
+                                                               $green $green $green \
+                                                               $blue  $blue  $blue \
+                                                               $alpha $alpha $alpha];
+                                        }
+                                    }
+                                }
+                                9   {
+                                    switch -- $channels {
+                                        3   { return [string cat "#" $color] }
+                                        4   {
+                                            # Add the alpha channel.
+                                            set alpha_channel "FFF"
+                                            return [string cat "#" $color $alpha_channel]
+                                        }
+                                    }
+                                }
+                                12  {
+                                    switch -- $channels {
+                                        3   {
+                                            # Remove the alpha channel.
+                                            return [string cat "#" [string range $color 0 end-3]]
+                                        }
+                                        4   {
+                                            # Retain the alpha channel.
+                                            return [string cat "#" $color]
+                                        }
+                                    }
                                 }
                             }
-
-                            return $fallback
-                        }
-                        default {
-                            # Check inside the palette provided.
-                            set colornames [dict get $::TABLE(palette,$palette) family all]
-
-                            set index [lsearch -exact -nocase $colornames $color]
-                            switch -- $index {
-                                -1      { return $fallback }
-                                default { return [dict get $::TABLE(palette,$palette) colorname [lindex $colornames $index] 16] }
-                            }
                         }
                     }
                 }
-                1   {
-                    switch -- [string length $color] {
-                        3   {
-                            # It's a valid hexadecimal shortform value (without its alpha channel).
-                            set red   [string index $color 0]
-                            set green [string index $color 1]
-                            set blue  [string index $color 2]
+                16  {
+                    switch -- [string is xdigit -strict $color] {
+                        1   {
+                            switch -- [string length $color] {
+                                3   {
+                                    # Get the channels shortform values.
+                                    set red   [string index $color 0]
+                                    set green [string index $color 1]
+                                    set blue  [string index $color 2]
 
-                            # Translate the color in its longform at 16 bits.
-                            return [string cat "#" \
-                                               $red   $red   $red   $red \
-                                               $green $green $green $green \
-                                               $blue  $blue  $blue  $blue];
+                                    # Expand the shortform into a longform.
+                                    switch -- $channels {
+                                        3   {
+                                            return [string cat "#" \
+                                                               $red   $red   $red   $red \
+                                                               $green $green $green $green \
+                                                               $blue  $blue  $blue  $blue];
+                                        }
+                                        4   {
+                                            # Add the alpha channel.
+                                            set alpha_channel "F"
 
-                        }
-                        4   {
-                            # It's a valid hexadecimal shortform value (with its alpha channel).
-                            set red   [string index $color 0]
-                            set green [string index $color 1]
-                            set blue  [string index $color 2]
-                            set alfa  [string index $color 3]
+                                            return [string cat "#" \
+                                                               $red           $red           $red           $red \
+                                                               $green         $green         $green         $green \
+                                                               $blue          $blue          $blue          $blue \
+                                                               $alpha_channel $alpha_channel $alpha_channel $alpha_channel];
+                                        }
+                                    }
+                                }
+                                4   {
+                                    # Get the channels shortform values.
+                                    set red   [string index $color 0]
+                                    set green [string index $color 1]
+                                    set blue  [string index $color 2]
+                                    set alpha [string index $color 3]
 
-                            # Translate the color in its longform at 16 bits.
-                            return [string cat "#" \
-                                               $red   $red   $red   $red \
-                                               $green $green $green $green \
-                                               $blue  $blue  $blue  $blue \
-                                               $alpha $alpha $alpha $alpha];
-                        }
-                        12  {
-                            # It's a valid hexadecimal longform value at 16 bits (without its alpha channel).
-                            return [string cat "#" $color]
-                        }
-                        16  {
-                            # It's a valid hexadecimal longform value at 16 bits (with its alpha channel).
-                            return [string cat "#" $color]
-                        }
-                        default {
-                            # It's an invalid hexadecimal value.
-                            return $fallback
+                                    # Expand the shortform into a longform.
+                                    switch -- $channels {
+                                        3   {
+                                            # Remove the alpha channel.
+                                            return [string cat "#" \
+                                                               $red   $red   $red   $red \
+                                                               $green $green $green $green \
+                                                               $blue  $blue  $blue  $blue];
+                                        }
+                                        4   {
+                                            # Retain the alpha channel.
+                                            return [string cat "#" \
+                                                               $red   $red   $red   $red \
+                                                               $green $green $green $green \
+                                                               $blue  $blue  $blue  $blue \
+                                                               $alpha $alpha $alpha $alpha];
+                                        }
+                                    }
+                                }
+                                12  {
+                                    switch -- $channels {
+                                        3   { return [string cat "#" $color] }
+                                        4   {
+                                            # Add the alpha channel.
+                                            set alpha_channel "FFFF"
+                                            return [string cat "#" $color $alpha_channel]
+                                        }
+                                    }
+                                }
+                                16  {
+                                    switch -- $channels {
+                                        3   {
+                                            # Remove the alpha channel.
+                                            return [string cat "#" [string range $color 0 end-4]]
+                                        }
+                                        4   {
+                                            # Retain the alpha channel.
+                                            return [string cat "#" $color]
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+    return $fallback
 }
 
 ## _CHECK_MEASURE
 #
-# Validates a measure.
+# Validate a measure.
 #
 # Where:
 #
-# measure       Should be the measure to check.
+# measure       Should be a string (or an integer in case of pixels) that specifies the measure to convert and its unit.
 #               Allowed units are:
-#                   p --> points,
-#                   i --> inches,
-#                   c --> centimeters,
-#                   m --> millimeters.
-#               If there is no unit the measure will be assumed to be pixels.
+#                   c --> centimeters
+#                   i --> inches
+#                   m --> millimeters
+#                   p --> points
+#               If there is no unit, the measure will be assumed to be in pixels.
 #
-# fallback      Optional. Should be the fallback value to return if the measure is invalid.
-#
+# fallback      Optional. Should be a string that specifies the fallback value to return if the color provided is invalid.
 #               If not provided, defaults to 'INVALID'.
 #
-# Returns the checked measure or the fallback value.
+# Return the checked measure or the fallback value.
 proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
-    set unit [string index $measure end]
-    switch -- $unit {
+    switch -- [string index $measure end] {
         0   -
         1   -
         2   -
@@ -1260,16 +1256,73 @@ proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
         i   -
         m   -
         p   {
-            # The measure have a valid unit, get it's value.
-            set value [string range $measure 0 end-1]
+            # The measure have a valid unit, retrieve it's value.
+            set measure [string range $measure 0 end-1]
 
-            if { [string is double -strict $value] && ( $value >= 0 ) } {
-                return [string cat $value $unit]
+            if { [string is double -strict $measure] && ( $measure >= 0 ) } {
+                return [string cat $measure $unit]
             } else {
                 return $fallback
             }
         }
         default { return $fallback }
+    }
+}
+
+## _CHECK_PALETTE_COLORNAME
+#
+# Validate a color expressed in textual form (like red, green, blue, purple, orange,...).
+#
+# IMPORTANT:    For performance reasons this procedure will not check its input values.
+#               If you are planning to use this procedure directly into your code (without calling the color command),
+#               be sure to check the input channels and depth before calling this procedure.
+#
+# Where:
+#
+# color         Should be the color to validate, expressed in textual form.
+#               See the 'Palettes' wiki page to know which palette colornames are allowed.
+#               Alpha channels are supported (see '-channels').
+#
+# channels      Should be an integer value that specifies the number of channels in which the color will be provided.
+#               Allowed values are:
+#                   3   --> without alpha channel
+#                   4   --> with alpha channel
+#
+#               If an hexadecimal color is specified with a number of channels different than the channels provided
+#               (but '3' or '4' nonetheless), the alpha channel will be added or subtracted, to reflect the channels
+#               value specified.
+#
+# depth         Should be an integer value indicating the bit depth of the colors provided.
+#               Allowed values are:
+#                   8   --> 8  bit
+#                   12  --> 10 bit
+#                   16  --> 16 bit
+#
+# fallback      Should be a string that specifies the fallback value to return if the color provided is invalid.
+#
+# Return the validated color in its hexadecimal longform or its fallback value.
+proc ::_CHECK_PALETTE_COLORNAME { color channels depth fallback } {
+    # Check inside all the registered palettes.
+    set colornames [dict get $::TABLE(palette,ALL) family all]
+    set index [lsearch -exact -nocase $colornames $color]
+    switch -- $index {
+        -1      { return $fallback }
+        default {
+            # Get the hexadecimal longform associated with the color name for the depth provided.
+            set color [dict get $::TABLE(palette,ALL) colorname [lindex $colornames $index] $depth]
+            switch -- $channels {
+                4   {
+                    # Add the alpha channel.
+                    switch -- $depth {
+                        8   { set alpha_channel "FF"   }
+                        12  { set alpha_channel "FFF"  }
+                        16  { set alpha_channel "FFFF" }
+                    }
+                    set color [string cat $color $alpha_channel]
+                }
+            }
+            return $color
+        }
     }
 }
 
@@ -1279,26 +1332,30 @@ proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
 #
 # Where:
 #
-# from          Should be the measure to convert.
+# measure       Should be a string (or an integer in case of pixels) that specifies the measure to convert and its unit.
 #               Allowed units are:
-#                   p --> points,
-#                   i --> inches,
-#                   c --> centimeters,
-#                   m --> millimeters.
-#               If there is no unit, the measure will be assumed to be pixels.
+#                   c --> centimeters
+#                   i --> inches
+#                   m --> millimeters
+#                   p --> points
+#               If there is no unit, the measure will be assumed to be in pixels.
 #
 # args          Optional. Should be a list of option/value pair.
 #               Allowed options are:
 #
-#                   to        Should be the unit in which the result needs to be expressed.
-#                             Allowed values:
-#                                 p --> points,
-#                                 i --> inches,
-#                                 c --> centimeters,
-#                                 m --> millimeters.
-#                             If not provided or provided as an empty string, the unit will be assumed to be pixels.
+#                   ?-to value?       --> Should be a string that specifies the unit in which the result needs to be expressed.
+#                                         Allowed values:
+#                                             centimeters
+#                                             inches
+#                                             millimeters
+#                                             pixels
+#                                             points
+#                                         If not provided, defaults to 'pixels'.
 #
-#                   fallback  Should be the fallback value to return if the measure is invalid.
+#                   ?-fallback value? --> Should be a string that specifies the fallback value to return if the measure provided is invalid.
+#                                         If not provided, defaults to 'INVALID'.
+#
+#               Note:  Unknown or wrong options will be ignored.
 #
 # Note:         2.54/72.0 = 0.035277777777777776
 #               25.4/72.0 = 0.35277777777777775
@@ -1308,10 +1365,10 @@ proc ::_CHECK_MEASURE { measure { fallback INVALID } } {
 #               1/2.54    = 0.39370078740157477
 #               1/25.4    = 0.03937007874015748
 #
-# Returns the converted measure or the fallback value.
+# Return the converted measure or the fallback value.
 proc ::_CONVERT_MEASURE { measure args } {
-    set fallback  INVALID
-    set to_unit   ""
+    set fallback INVALID
+    set to       ""
 
     # Checks that 'args' is a valid option/value list.
     switch -- [expr { [llength $args]%2 }] {
@@ -1326,11 +1383,11 @@ proc ::_CONVERT_MEASURE { measure args } {
                     -fallback { set fallback $value }
                     -to {
                         switch -- $value {
-                            ""  -
-                            c   -
-                            i   -
-                            m   -
-                            p   { set to_unit $value }
+                            centimeters -
+                            inches      -
+                            millimeters -
+                            points      -
+                            pixels      { set to $value }
                         }
                     }
                 }
@@ -1338,8 +1395,8 @@ proc ::_CONVERT_MEASURE { measure args } {
         }
     }
 
-    set from_unit [string index $measure end]
-    switch -- $unit {
+    # Check the measure provided and extract is unit.
+    switch -- [string index $measure end] {
         0   -
         1   -
         2   -
@@ -1350,10 +1407,9 @@ proc ::_CONVERT_MEASURE { measure args } {
         7   -
         8   -
         9   {
-            set from_unit   ""
-            set from_value  $measure
+            set from "pixels"
 
-            switch -- [string is integer -strict $from_value] {
+            switch -- [string is integer -strict $measure] {
                 0   { return $fallback }
             }
         }
@@ -1361,60 +1417,66 @@ proc ::_CONVERT_MEASURE { measure args } {
         i   -
         m   -
         p   {
-            set from_value [string range $measure 0 end-1]
+            switch -- $from {
+                c   { set from "centimeters" }
+                i   { set from "inches"      }
+                m   { set from "millimeters" }
+                p   { set from "points"      }
+            }
 
-            switch -- [string is double -strict $from_value] {
+            set measure [string range $measure 0 end-1]
+            switch -- [string is double -strict $measure] {
                 0   { return $fallback }
             }
         }
         default { return $fallback }
     }
 
-    set tk_scaling [tk scaling]
-    switch -- $from_unit {
-        ""  {
-            switch -- $to_unit {
-                c       { return [string cat [expr { ($from_value/$tk_scaling)*0.035277777777777776 }] "c"] }
-                i       { return [string cat [expr { ($from_value/$tk_scaling)*0.013888888888888888 }] "i"] }
-                m       { return [string cat [expr { ($from_value/$tk_scaling)*0.352777777777777750 }] "m"] }
-                p       { return [string cat [expr { ($from_value/$tk_scaling) }] "p"] }
-                default { return [expr { round($from_value) }] }
+    # Execute the conversion.
+    switch -- $from {
+        centimeters {
+            switch -- $to {
+                centimeters { return [string cat $measure "c"] }
+                inches      { return [string cat [expr { $measure*0.39370078740157477 }] "i"] }
+                millimeters { return [string cat [expr { $measure*10 }] "m"] }
+                points      { return [string cat [expr { $measure*28.3464566929133850 }] "p"] }
+                pixels      { return [expr { round($measure*[tk scaling]*28.346456692913385) }] }
             }
         }
-        c   {
-            switch -- $to_unit {
-                c       { return [string cat $from_value "c"] }
-                i       { return [string cat [expr { $from_value*0.39370078740157477 }] "i"] }
-                m       { return [string cat [expr { $from_value*10 }] "m"] }
-                p       { return [string cat [expr { $from_value*28.3464566929133850 }] "p"] }
-                default { return [expr { round($from_value*$tk_scaling*28.346456692913385) }] }
+        inches {
+            switch -- $to {
+                centimeters { return [string cat [expr { $measure*2.54 }] "c"] }
+                inches      { return [string cat $measure "i"] }
+                millimeters { return [string cat [expr { $measure*25.4 }] "m"] }
+                points      { return [string cat [expr { $measure*72.0 }] "p"] }
+                pixels      { return [expr { round($measure*[tk scaling]*72.0) }] }
             }
         }
-        i   {
-            switch -- $to_unit {
-                c       { return [string cat [expr { $from_value*2.54 }] "c"] }
-                i       { return [string cat $from_value "i"] }
-                m       { return [string cat [expr { $from_value*25.4 }] "m"] }
-                p       { return [string cat [expr { $from_value*72.0 }] "p"] }
-                default { return [expr { round($from_value*$tk_scaling*72.0) }] }
+        millimeters {
+            switch -- $to {
+                centimeters { return [string cat [expr { $measure*0.1 }] "c"] }
+                inches      { return [string cat [expr { $measure*0.03937007874015748 }] "i"] }
+                millimeters { return [string cat $measure "m"] }
+                points      { return [string cat [expr { $measure*2.83464566929133900 }] "p"] }
+                pixels      { return [expr { round($measure*[tk scaling]*2.834645669291339) }] }
             }
         }
-        m   {
-            switch -- $to_unit {
-                c       { return [string cat [expr { $from_value*0.1 }] "c"] }
-                i       { return [string cat [expr { $from_value*0.03937007874015748 }] "i"] }
-                m       { return [string cat $from_value "m"] }
-                p       { return [string cat [expr { $from_value*2.83464566929133900 }] "p"] }
-                default { return [expr { round($from_value*$tk_scaling*2.834645669291339) }] }
+        pixels {
+            switch -- $to {
+                centimeters { return [string cat [expr { ($measure/[tk scaling])*0.035277777777777776 }] "c"] }
+                inches      { return [string cat [expr { ($measure/[tk scaling])*0.013888888888888888 }] "i"] }
+                millimeters { return [string cat [expr { ($measure/[tk scaling])*0.352777777777777750 }] "m"] }
+                points      { return [string cat [expr { ($measure/[tk scaling]) }] "p"] }
+                pixels      { return [expr { round($measure) }] }
             }
         }
-        p   {
-            switch -- $to_unit {
-                c       { return [string cat [expr { $from_value*0.035277777777777776 }] "c"] }
-                i       { return [string cat [expr { $from_value*0.013888888888888888 }] "i"] }
-                m       { return [string cat [expr { $from_value*0.352777777777777750 }] "m"] }
-                p       { return [string cat $from_value "p"] }
-                default { return [expr { round($from_value*$tk_scaling) }] }
+        points {
+            switch -- $to {
+                centimeters { return [string cat [expr { $measure*0.035277777777777776 }] "c"] }
+                inches      { return [string cat [expr { $measure*0.013888888888888888 }] "i"] }
+                millimeters { return [string cat [expr { $measure*0.352777777777777750 }] "m"] }
+                points      { return [string cat $measure "p"] }
+                pixels      { return [expr { round($measure*[tk scaling]) }] }
             }
         }
     }
@@ -1422,7 +1484,7 @@ proc ::_CONVERT_MEASURE { measure args } {
 
 ## _FATAL_ERROR
 #
-# Displays the fatal error window and exits.
+# Display the fatal error window and exits.
 #
 # Where:
 #
