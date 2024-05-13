@@ -840,6 +840,35 @@ proc ::Jay::init {} {
             ::_FATAL_ERROR [list "Unable to load '%s'." [file rootname [file tail $::path]]]
         }
     }
+
+    # Load the Jay commands (including some Tk commands that will now be managed directly by Jay).
+    foreach ::path [glob -type f -nocomplain -directory [file join $::JAY_DIR cmds] -- *.tcl] {
+        try {
+            apply { {} { source -encoding utf-8 $::path }}
+        } on error { errortext errorcode } {
+            ::_FATAL_ERROR [list "Unable to load '%s'." [file rootname [file tail $::path]]]
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # Unset the variable '::path' because it's no longer needed.
+    # It was defined in the global namespace in order to be used inside the apply command.
+    unset -nocomplain -- ::path
+
+    # From this moment on, Jay is up and running.
+    set ::TEMP(init,state) done
 }
 
 
