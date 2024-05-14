@@ -159,6 +159,8 @@ proc ::Jay::init {} {
     # ['blue', 'cyan', 'green', 'orange', 'purple', 'red', 'yellow' or 'custom']
     set ::ACCENT_COLOR "blue"
 
+    # ::ARCH
+    #
     # It's a string that specifies the operating system architecture in use.
     #
     # ['32 bit' or '64 bit']
@@ -167,26 +169,36 @@ proc ::Jay::init {} {
         4   { set ::ARCH "32 bit" }
     }
 
+    # CIE
+    #
     # It's a string that specifies the actual CIE standards in use.
     #
     # ['standard' or 'intent']
     set ::CIE "standard"
 
+    # COLORSCHEME
+    #
     # It's a string that specifies the colorscheme in use.
     #
     # ['light' or 'dark']
     set ::COLORSCHEME "light"
 
+    # DEBUG
+    #
     # It's a boolean that specifies the debug state.
     #
     # ['enabled' or 'disabled']
     set ::DEBUG "disabled"
 
+    # DEPTH
+    #
     # It's an integer that specifies the color depth in use.
     #
     # ['8', '12' or '16']
     set ::DEPTH 8
 
+    # FOLLOWMOUSE
+    #
     # It's a boolean that specifies if the focus must follow the pointer or not.
     #
     # ['enabled' or 'disabled']
@@ -200,6 +212,8 @@ proc ::Jay::init {} {
     #        3rd party package developers should use the widget '-textvariable' option
     #        instead of the '-text' one, and manage their translation internally.
 
+    # ::LANGUAGES
+    #
     # It's a string that specifies the available languages.
     # It must follow the 'ISO 639-1' specifications.
     set ::LANGUAGES [list ]
@@ -212,84 +226,109 @@ proc ::Jay::init {} {
     }
     ::msgcat::mcload [file join $::JAY_DIR msgs]
 
+    # LANGUAGE
+    #
     # It's a string that specifies the language in use.
     # It must follow the 'ISO 639-1' specifications.
     set ::LANGUAGE [::msgcat::mclocale]
 
+    # ::NOTIFICATIONS
+    #
     # It's a boolean that specifies the notifications state.
     #
     # ['enabled' or 'disabled']
     set ::NOTIFICATIONS "enabled"
 
+    # ::PALETTES
+    #
     # It's a list that specifies all the available palettes.
     set ::PALETTES [list ALL]
 
+    # ::POPUPS
+    #
     # It's a boolean that specifies the popups state.
     #
     # ['enabled' or 'disabled']
     set ::POPUPS "enabled"
 
+    # ::SCREEN_PPI
+    #
     # It's a floating point that specifies the physical pixels per inch of the
     # screen in which the application is displayed.
     set ::SCREEN_PPI [winfo fpixels . 1i]
 
+    # ::SCROLLSPEED
+    #
     # It's a floating point that specifies the scrolling speed value in use.
     # It will always be interpreted as percentage even without the '%' symbol.
     #
     # [1.0,300.0]
     set ::SCROLLSPEED 50.0
 
+    # ::TEMP(init,state)
+    #
     # It's a string that specifies the Jay initialization state.
     #
     # ['ongoing', 'done']
     set ::TEMP(init,state) ongoing
 
-    # It's a string that specifies the theme name currently in use.
-    set ::THEME ""
-
+    # ::THEMES
+    #
     # It's a list that specifies the available themes names.
     set ::THEMES [list ]
 
+    # ::THEME
+    #
+    # It's a string that specifies the theme name currently in use.
+    set ::THEME ""
+
+    # ::UI_SCALE_FACTOR
+    #
     # It's a floating point that specifies the UI scale factor in use.
-    # It will always be interpreted as percentage even without the '%' symbol.
+    # It will always be interpreted as percentage, even without the '%' symbol.
     #
     # [75.0,300.0]
     set ::UI_SCALE_FACTOR 100.0
 
-    # It's a character that specifies the union symbol in use inside menus popups
-    # or contextual menus, to indicate shortcuts combos like 'Ctrl+C' for copy.
+    # ::UNION
+    #
+    # It's a character that specifies the union symbol inside a shortcut that links two
+    # or more keys together (like 'Ctrl+C', 'Ctrl-C' or 'Ctrl C' for copy).
+    # It's used inside menus popups and/or contextual menus.
     #
     # ['+', '-' or 'space']
     set ::UNION "+"
 
-    # sRGB v4 - Chromaticity matrix.
+    # Note:  The following data has been exctracted/computed from the icc profile 'sRGB_v4.icc'.
+
+    # Chromaticity matrix.
     #
     #   | a1  b1  c1 |
     #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
     #   | a3  b3  c3 |
     set ::sRGB(chromaticity) [list 0.63999938964843750 0.33000183105468750 1.00000000000000000 0.30000305175781250 0.60000610351562500 1.00000000000000000 0.14999389648437500 0.05999755859375000 1.00000000000000000]
 
-    # sRGB v4 - Whitepoint D65 xyz.
+    # Whitepoint D65 xyz.
     set ::sRGB(whitepoint,x) 0.31270049247729637
     set ::sRGB(whitepoint,y) 0.32900093876915815
     set ::sRGB(whitepoint,z) 0.3582985687535455
 
-    # sRGB v4 - Whitepoint D65 XYZ.
+    # Whitepoint D65 XYZ.
     set ::sRGB(whitepoint,X) 0.95045471191406250
     set ::sRGB(whitepoint,Y) 1.0
     set ::sRGB(whitepoint,Z) 1.08905029296875000
 
-    # sRGB v4 - PCS D50 xyz.
+    # PCS D50 xyz.
     set ::sRGB(PCS,x) 0.345702914918791
     set ::sRGB(PCS,y) 0.3585385966799326
     set ::sRGB(PCS,z) 0.2957584884012764
 
-    # sRGB v4 - PCS D50 XYZ.
+    # PCS D50 XYZ.
     set ::sRGB(PCS,X) 0.96419999999999995
     set ::sRGB(PCS,Y) 1.0
     set ::sRGB(PCS,Z) 0.82489999999999997
 
-    # sRGB v4 - Chromatic adaptation matrices (from 'D65' to 'D50' and viceversa).
+    # Chromatic adaptation matrices (from 'D65' to 'D50' and viceversa).
     #
     #   | a1  b1  c1 |
     #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
@@ -297,12 +336,12 @@ proc ::Jay::init {} {
     set ::sRGB(chad)         [list 1.04788208007812500 0.02958679199218750 -0.00924682617187500 0.02291870117187500 0.99047851562500000 0.01507568359375000 -0.05021667480468750 -0.01707458496093750 0.75167846679687500]
     set ::sRGB(chad_inverse) [list 0.9555159902501114 -0.02307332134099263 0.06331013920126154 -0.028329994273946075 1.0099481697889854 0.021048637709356464 0.012322535106861805 -0.020539385824452097 1.3307127175165263]
 
-    # sRGB v4 - Unadapted Y.
+    # Unadapted Y.
     set ::sRGB(unadapted,Yr) 0.21264461762001413
     set ::sRGB(unadapted,Yg) 0.7151663725690272
     set ::sRGB(unadapted,Yb) 0.07218900981095855
 
-    # sRGB v4 - RGB_XYZ and XYZ_RGB matrices.
+    # RGB_XYZ and XYZ_RGB matrices.
     #
     #   | a1  b1  c1 |
     #   | a2  b2  c2 | --> [list a1 a2 a3 b1 b2 b3 c1 c2 c3]
@@ -850,6 +889,665 @@ proc ::Jay::init {} {
         }
     }
 
+    # Check the windowing system.
+    switch -- [tk windowingsystem] {
+        aqua {
+            # Load the MacOS specific dependencies.
+            #package require tcltls
+            #package require extrafont
+
+            # ::CURSORS
+            #
+            # It's a list containing the available cursors types for the current operating system.
+            set ::CURSORS [list aliasarrow arrow based_arrow_down based_arrow_up boat bogosity bottom_left_corner bottom_right_corner bottom_side bottom_tee box_spiral bucket cancel center_ptr circle clock closedhand coffee_mug contextualmenuarrow copyarrow countingdownhand countingupanddownhand countinguphand cross cross-hair cross_reverse crosshair diamond_cross dot dotbox double_arrow draft_large draft_small draped_box exchange eyedrop eyedrop-full fist fleur gobbler gumby hand hand1 hand2 heart help icon iron_cross left_ptr left_side left_tee leftbutton ll_angle lr_angle man middlebutton mouse movearrow none notallowed openhand pencil pirate plus pointinghand poof question_arrow resize resizebottomleft resizebottomright resizedown resizeleft resizeleftright resizeright resizetopleft resizetopright resizeup resizeupdown right_ptr right_side right_tee rightbutton rtl_logo sailboat sb_down_arrow sb_h_double_arrow sb_left_arrow sb_right_arrow sb_up_arrow sb_v_double_arrow shuttle sizing spider spinning spraycan star target tcross text top_left_arrow top_left_corner top_right_corner top_side top_tee trek ul_angle umbrella ur_angle wait watch X_cursor xterm zoom-in zoom-out]
+
+            # ::SYSTEM_COLORNAMES
+            #
+            # It's a list containing the available system colornames for the current operating system.
+            set ::SYSTEM_COLORNAMES [list systemActiveAreaFill systemAlertBackgroundActive systemAlertBackgroundInactive systemAlternatePrimaryHighlightColor systemAppleGuideCoachmark systemBevelActiveDark systemBevelActiveLight systemBevelInactiveDark systemBevelInactiveLight systemBlack systemButtonActiveDarkHighlight systemButtonActiveDarkShadow systemButtonActiveLightHighlight systemButtonActiveLightShadow systemButtonFace systemButtonFaceActive systemButtonFaceInactive systemButtonFacePressed systemButtonFrame systemButtonFrameActive systemButtonFrameInactive systemButtonInactiveDarkHighlight systemButtonInactiveDarkShadow systemButtonInactiveLightHighlight systemButtonInactiveLightShadow systemButtonPressedDarkHighlight systemButtonPressedDarkShadow systemButtonPressedLightHighlight systemButtonPressedLightShadow systemChasingArrows systemDialogBackgroundActive systemDialogBackgroundInactive systemDocumentWindowBackground systemDragHilite systemDrawerBackground systemFinderWindowBackground systemFocusHighlight systemHighlight systemHighlightAlternate systemHighlightSecondary systemIconLabelBackground systemIconLabelBackgroundSelected systemListViewBackground systemListViewColumnDivider systemListViewEvenRowBackground systemListViewOddRowBackground systemListViewSeparator systemListViewSortColumnBackground systemMenu systemMenuActive systemMenuBackground systemMenuBackgroundSelected systemModelessDialogBackgroundActive systemModelessDialogBackgroundInactive systemMovableModalBackground systemNotificationWindowBackground systemPopupArrowActive systemPopupArrowInactive systemPopupArrowPressed systemPrimaryHighlightColor systemScrollBarDelimiterActive systemScrollBarDelimiterInactive systemSecondaryHighlightColor systemSelectedTabTextColor systemSheetBackground systemSheetBackgroundOpaque systemSheetBackgroundTransparent systemStaticAreaFill systemToolbarBackground systemTransparent systemUtilityWindowBackgroundActive systemUtilityWindowBackgroundInactive systemWhite systemWindowBody systemControlAccentColor systemControlTextColor systemDisabledControlTextColor systemLabelColor systemLinkColor systemPlaceholderTextColor systemSelectedTextBackgroundColor systemSelectedTextColor systemSeparatorColor systemTextBackgroundColor systemTextColor systemWindowBackgroundColor systemWindowBackgroundColor1 systemWindowBackgroundColor2 systemWindowBackgroundColor3 systemWindowBackgroundColor4 systemWindowBackgroundColor5 systemWindowBackgroundColor6 systemWindowBackgroundColor7]
+
+            # ::KERNEL_VERSION
+            #
+            # It's a string that specifies the kernel version (major.minor.patch).
+            # It's only present in Mac and Linux operating system.
+            set kernel [lindex [split $::tcl_platform(osVersion) -] 0]
+            switch -- [package vcompare 6.1.0 $kernel] {
+                -1      { set ::KERNEL_VERSION $kernel }
+                default {
+                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'."
+
+                    exit 1
+                }
+            }
+
+            # ::UID
+            #
+            # It's an integer that specifies the user ID.
+            # It's only present in Mac and Linux operating system.
+            set id_options [list -u $::tcl_platform(user)]
+            try {
+                exec [auto_execok id] {*}$id_options
+            } on error {} {
+                ::_FATAL_ERROR "Error while executing the 'id' command."
+
+                exit 1
+            } on ok { result } {
+                set ::UID $result
+            }
+
+            # ::ADMIN
+            #
+            # It's a string that specifies if the application was launched with
+            # admin rights priviledges (sudo) or not.
+            #
+            # ['yes', 'no']
+            switch -- [info exists ::env(SUDO_USER)] {
+                0   { set ::ADMIN no  }
+                1   {
+                    if { $::env(SUDO_USER) eq $::tcl_platform(user) } {
+                        set ::ADMIN yes
+                    } else {
+                        set ::ADMIN no
+                    }
+                }
+            }
+
+            # ::OS_NAME
+            # ::OS_PRETTYNAME
+            # ::OS_VERSION
+            #
+            # They are strings that specifies the name, prettyname and version of the current operating system.
+            try {
+                exec [auto_execok sw_vers] -productVersion
+            } on error {} {
+                set ::OS_NAME       macOS
+                set ::OS_PRETTYNAME "Apple macOS"
+                set ::OS_VERSION    "unknown"
+            } on ok { version } {
+                # Note:  Data taken from 'https://ss64.com/osx/sw_vers.html'.
+                switch -glob -- $version {
+                    "14*"   { set ::OS_NAME "macOS Sonoma" }
+                    "13*"   { set ::OS_NAME "macOS Ventura" }
+                    "12*"   { set ::OS_NAME "macOS Monterey" }
+                    "11*"   -
+                    "10.16" { set ::OS_NAME "macOS Big Sur" }
+                    "10.15" { set ::OS_NAME "macOS Catalina" }
+                    "10.14" { set ::OS_NAME "macOS Mojave" }
+                    "10.13" { set ::OS_NAME "macOS High Sierra" }
+                    "10.12" { set ::OS_NAME "macOS Sierra" }
+                    "10.11" { set ::OS_NAME "OS X El Capitan" }
+                    "10.10" { set ::OS_NAME "OS X Yosemite" }
+                    "10.9"  { set ::OS_NAME "OS X Mavericks" }
+                    "10.8"  { set ::OS_NAME "Mac OS X Mountain Lion" }
+                    "10.7"  { set ::OS_NAME "Mac OS X Lion" }
+                    "10.6"  { set ::OS_NAME "Mac OS X Snow Leopard" }
+                    "10.5"  { set ::OS_NAME "Mac OS X Leopard" }
+                    "10.4"  { set ::OS_NAME "Mac OS X Tiger" }
+                    "10.3"  { set ::OS_NAME "Mac OS X Panther" }
+                    "10.2"  { set ::OS_NAME "Mac OS X Jaguar" }
+                    "10.1"  { set ::OS_NAME "Mac OS X Puma" }
+                    "10.0"  { set ::OS_NAME "Mac OS X Cheetah" }
+                }
+                set ::OS_PRETTYNAME [list {*}$::OS_NAME $version]
+                set ::OS_VERSION    $version
+            }
+
+            # ::CPU_MODEL
+            #
+            # It's a string that specifies the cpu model name.
+            try {
+                exec [auto_execok sysctl] -n machdep.cpu.brand_string
+            } on error {} {
+                set ::CPU_MODEL "unknown"
+            } on ok { result } {
+                set ::CPU_MODEL [lreplace $result 0 2]
+            }
+
+            # ::CPU_CORES
+            #
+            # It's an integer that specifies the number of cpu cores available.
+            try {
+                exec [auto_execok sysctl] -n hw.physicalcpu
+            } on error {} {
+                set ::CPU_CORES 1
+            } on ok { result } {
+                set ::CPU_CORES $result
+            }
+
+            # ::CPU_THREADS
+            #
+            # It's an integer that specifies the number of cpu threads available.
+            try {
+                exec [auto_execok sysctl] -n hw.logicalcpu
+            } on error {} {
+                set ::CPU_THREADS 1
+            } on ok { result } {
+                set ::CPU_THREADS $result
+            }
+        }
+        win32 {
+            # Load the Microsoft Windows specific dependencies.
+            package require twapi
+            #package require dde
+            #package require registry
+
+            # ::CURSORS
+            #
+            # It's a list containing the available cursors types for the current operating system.
+            set ::CURSORS [list arrow based_arrow_down based_arrow_up boat bogosity bottom_left_corner bottom_right_corner bottom_side bottom_tee box_spiral center_ptr circle clock coffee_mug cross cross_reverse crosshair diamond_cross dot dotbox double_arrow draft_large draft_small draped_box exchange fleur gobbler gumby hand1 hand2 heart icon iron_cross left_ptr left_side left_tee leftbutton ll_angle lr_angle man middlebutton mouse no none pencil pirate plus question_arrow right_ptr right_side right_tee rightbutton rtl_logo sailboat sb_down_arrow sb_h_double_arrow sb_left_arrow sb_right_arrow sb_up_arrow sb_v_double_arrow shuttle size size_ne_sw size_ns size_nw_se size_we sizing spider spraycan star starting target tcross top_left_arrow top_left_corner top_right_corner top_side top_tee trek ul_angle umbrella uparrow ur_angle wait watch X_cursor xterm]
+
+            # ::SYSTEM_COLORNAMES
+            #
+            # It's a list containing the available system colornames for the current operating system.
+            set ::SYSTEM_COLORNAMES [list system3dDarkShadow system3dLight systemActiveBorder systemActiveCaption systemAppWorkspace systemBackground systemButtonFace systemButtonHighlight systemButtonShadow systemButtonText systemCaptionText systemDisabledText systemGrayText systemHighlight systemHighlightText systemInactiveBorder systemInactiveCaption systemInactiveCaptionText systemInfoBackground systemInfoText systemMenu systemMenuText systemScrollbar systemWindow systemWindowFrame systemWindowText]
+
+            # Check the minimum Microsoft Windows version allowed.
+            switch -- [::twapi::min_os_version [list 10 0 0 0]] {
+                0   {
+                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least 'Microsoft Windows 10 build number 17063'."
+
+                    exit 1
+                }
+            }
+
+            # ::ADMIN
+            #
+            # It's a string that specifies if the application was launched with
+            # admin rights priviledges (sudo) or not.
+            #
+            # ['yes', 'no']
+            set token  [::twapi::open_process_token]
+            set groups [::twapi::get_token_groups_and_attrs $token]
+            switch -- [dict exists $groups S-1-5-32-544] {
+                0   { set ::ADMIN no }
+                1   {
+                    if { "enabled" in [dict get $groups S-1-5-32-544] } {
+                        set ::ADMIN yes
+                    } else {
+                        set ::ADMIN no
+                    }
+                }
+            }
+            ::twapi::close_token $token
+
+            # Get the WMI object.
+            set WMI [::twapi::wmi_root]
+
+            # ::OS_NAME
+            # ::OS_PRETTYNAME
+            # ::OS_VERSION
+            #
+            # They are strings that specifies the name, prettyname and version of the current operating system.
+            $WMI -with { { ExecQuery "select * from Win32_OperatingSystem" } } -iterate OS {
+                set ::OS_NAME    [$OS Caption]
+                set ::OS_VERSION [$OS Version]
+
+                set version      [split $::OS_VERSION "."]
+                set major        [lindex $version 0]
+                set minor        [lindex $version 1]
+                set buildNumber  [lindex $version 2]
+
+                if { ($major < 11) && ($buildNumber < 17063) } {
+                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least 'Microsoft Windows 10 build number 17063'."
+
+                    exit 1
+                }
+
+                set ::OS_PRETTYNAME [list $::OS_NAME "$major.$minor" "build number" $buildNumber]
+            }
+
+            # Get the cpu infos.
+            $WMI -with { { ExecQuery "select * from Win32_PROCESSOR" } } -iterate CPU {
+                # ::CPU_MODEL
+                #
+                # It's a string that specifies the cpu model name.
+                set ::CPU_MODEL   [$CPU Name]
+
+                # ::CPU_CORES
+                #
+                # It's an integer that specifies the number of cpu cores available.
+                set ::CPU_CORES   [$CPU NumberOfCores]
+
+                # ::CPU_THREADS
+                #
+                # It's an integer that specifies the number of cpu threads available.
+                set ::CPU_THREADS [$CPU NumberOfLogicalProcessors]
+            }
+
+            # Destroy the WMI object.
+            $WMI -destroy
+        }
+        x11 {
+            # Load the Linux specific dependencies.
+            #package require tcltls
+            #package require extrafont
+
+            # ::CURSORS
+            #
+            # It's a list containing the available cursors types for the current operating system.
+            set ::CURSORS [list arrow based_arrow_down based_arrow_up boat bogosity bottom_left_corner bottom_right_corner bottom_side bottom_tee box_spiral center_ptr circle clock coffee_mug cross cross_reverse crosshair diamond_cross dot dotbox double_arrow draft_large draft_small draped_box exchange fleur gobbler gumby hand1 hand2 heart icon iron_cross left_ptr left_side left_tee leftbutton ll_angle lr_angle man middlebutton mouse none pencil pirate plus question_arrow right_ptr right_side right_tee rightbutton rtl_logo sailboat sb_down_arrow sb_h_double_arrow sb_left_arrow sb_right_arrow sb_up_arrow sb_v_double_arrow shuttle sizing spider spraycan star target tcross top_left_arrow top_left_corner top_right_corner top_side top_tee trek ul_angle umbrella ur_angle watch X_cursor xterm]
+
+            # ::SYSTEM_COLORNAMES
+            #
+            # It's a list containing the available system colornames for the current operating system.
+            set ::SYSTEM_COLORNAMES [list system3dDarkShadow systemHighlightText system3dLight systemInactiveBorder systemActiveBorder systemInactiveCaption systemActiveCaption systemInactiveCaptionText systemAppWorkspace systemInfoBackground systemBackground systemInfoText systemButtonFace systemMenu systemButtonHighlight systemMenuText systemButtonShadow systemPlaceholderText systemButtonText systemScrollbar systemCaptionText systemWindow systemDisabledText systemWindowFrame systemGrayText systemWindowText systemHighlight]
+
+            # ::KERNEL_VERSION
+            #
+            # It's a string that specifies the kernel version (major.minor.patch).
+            # It's only present in Mac and Linux operating system.
+            set kernel [lindex [split $::tcl_platform(osVersion) -] 0]
+            switch -- [package vcompare 6.1.0 $kernel] {
+                -1      { set ::KERNEL_VERSION $kernel }
+                default {
+                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'."
+
+                    exit 1
+                }
+            }
+
+            # ::UID
+            #
+            # It's an integer that specifies the user ID.
+            # It's only present in Mac and Linux operating system.
+            switch -- [info exists ::env(XDG_RUNTIME_DIR)] {
+                0   {
+                    set id_options [list -u $::tcl_platform(user)]
+                    try {
+                        exec [auto_execok id] {*}$id_options
+                    } on error {} {
+                        ::_FATAL_ERROR "Error while executing the 'id' command."
+
+                        exit 1
+                    } on ok { result } {
+                        set ::UID $result
+                    }
+                }
+                1   { set ::UID [file tail $::env(XDG_RUNTIME_DIR)] }
+            }
+
+            # ::ADMIN
+            #
+            # It's a string that specifies if the application was launched with
+            # admin rights priviledges (sudo) or not.
+            #
+            # ['yes', 'no']
+            switch -- [info exists ::env(SUDO_USER)] {
+                0   { set ::ADMIN no  }
+                1   {
+                    if { $::env(SUDO_USER) eq $::tcl_platform(user) } {
+                        set ::ADMIN yes
+                    } else {
+                        set ::ADMIN no
+                    }
+                }
+            }
+
+            # ::GLIBC_VERSION
+            #
+            # It's a string that specifies the glibc version (major.minor).
+            # It's only present in Linux operating system.
+            try {
+                exec [auto_execok getconf] GNU_LIBC_VERSION
+            } on error {} {
+                set GLIBC_VERSION "unknown"
+            } on ok { result } {
+                set GLIBC_VERSION [lindex $result end]
+            }
+
+            set path [file join / proc cpuinfo]
+
+            # ::CPU_MODEL
+            #
+            # It's a string that specifies the cpu model name.
+            set grep_options [list -m 1 "model name" $path]
+            try {
+                exec [auto_execok grep] {*}$grep_options
+            } on error {} {
+                set ::CPU_MODEL "unknown"
+            } on ok { result } {
+                set ::CPU_MODEL [lreplace $result 0 2]
+            }
+
+            # ::CPU_CORES
+            #
+            # It's an integer that specifies the number of cpu cores available.
+            set grep_options [list -m 1 "cpu cores" $path]
+            try {
+                exec [auto_execok grep] {*}$grep_options
+            } on error {} {
+                set ::CPU_CORES 1
+            } on ok { result } {
+                set ::CPU_CORES [lreplace $result 0 2]
+            }
+
+            # ::CPU_THREADS
+            #
+            # It's an integer that specifies the number of cpu threads available.
+            try {
+                exec [auto_execok getconf] _NPROCESSORS_ONLN
+            } on error {} {
+                set ::CPU_THREADS 1
+            } on ok { result } {
+                set ::CPU_THREADS $result
+            }
+
+            # ::PKG_MANAGER
+            # Get the operating system package manager.
+            # It's only present in Linux operating system.
+            #
+            # ['apt', 'dnf', 'emerge', 'installpkg', 'pacman', 'rpm', 'zypper', 'yum', 'unknown']
+            set ::PKG_MANAGER "unknown"
+            foreach name [list apt dnf emerge installpkg pacman rpm zypper yum] {
+                switch -- [auto_execok $name] {
+                    ""      {}
+                    default {
+                        set ::PKG_MANAGER $name
+                        break
+                    }
+                }
+            }
+
+            # ::DE_WM
+            #
+            # It's a string that specifies the desktop environment (DE) or window manager (WM) currently in use.
+            # It's only present in Linux operating system.
+            set ps_options [list -e | [auto_execok grep] -E -i "awesome|bspwm|budgie-desktop|cinnamon-session|cosmic-launcher|dwm|enlightenment_start|gala|gnome-session|hyprland|i3|mate-session|openbox-session|qtile|startdde|startlxde|startlxqt|startkde|startplasma|startplasma-x11|startplasma-wayland|startxfce|startxfce2|startxfce3|startxfce4|sway|unity|xmonad"]
+            try {
+                exec [auto_execok ps] {*}$ps_options
+            } on error {} {
+                set ::DE_WM "unknown"
+            } on ok { results } {
+                switch -- $results {
+                    ""      { set ::DE_WM "unknown" }
+                    default {
+                        switch -nocase -- [lindex $results end] {
+                            awesome             { set ::DE_WM   AwesomeWM }
+                            bspwm               { set ::DE_WM   BSPWM }
+                            budgie-desktop      { set ::DE_WM   Budgie }
+                            cinnamon-session    { set ::DE_WM   Cinnamon }
+                            cosmic-launcher     { set ::DE_WM   COSMIC }
+                            dwm                 { set ::DE_WM   DWM }
+                            enlightenment_start { set ::DE_WM   Enlightenment }
+                            gala                { set ::DE_WM   Pantheon }
+                            gnome-session       { set ::DE_WM   Gnome }
+                            hyprland            { set ::DE_WM   Hyprland }
+                            i3                  { set ::DE_WM   i3 }
+                            mate-session        { set ::DE_WM   Mate }
+                            openbox-session     { set ::DE_WM   Openbox }
+                            qtile               { set ::DE_WM   Qtile }
+                            startdde            { set ::DE_WM   Deepin }
+                            startlxde           { set ::DE_WM   LXDE }
+                            startlxqt           { set ::DE_WM   LXQT }
+                            startkde            { set ::DE_WM   KDE }
+                            startplasma         -
+                            startplasma-x11     -
+                            startplasma-wayland { set ::DE_WM   "KDE plasma" }
+                            startxfce           -
+                            startxfce2          -
+                            startxfce3          -
+                            startxfce4          { set ::DE_WM   XFCE }
+                            sway                { set ::DE_WM   SWAY }
+                            unity               { set ::DE_WM   Unity }
+                            xmonad              { set ::DE_WM   Xmonad }
+                        }
+                    }
+                }
+            }
+
+            # Get the operating system info.
+            #
+            # ::OS_NAME
+            # ::OS_PRETTYNAME
+            # ::OS_VERSION
+            #
+            # They are strings that specifies the name, prettyname and version of the current operating system.
+
+            # Example 1: Arch Linux    /etc/os-release
+            #
+            # NAME="Arch Linux"
+            # PRETTY_NAME="Arch Linux"
+            # ID=arch
+            # BUILD_ID=rolling
+            # ANSI_COLOR="0;36"
+            # HOME_URL="https://www.archlinux.org/"
+            # DOCUMENTATION_URL="https://wiki.archlinux.org/"
+            # SUPPORT_URL="https://bbs.archlinux.org/"
+            # BUG_REPORT_URL="https://bugs.archlinux.org/"
+            #
+            # Example 2: Amazon Linux  /etc/release
+            #
+            # NAME="Amazon Linux AMI"
+            # VERSION="2016.09"
+            # ID="amzn"
+            # ID_LIKE="rhel fedora"
+            # VERSION_ID="2016.09"
+            # PRETTY_NAME="Amazon Linux AMI 2016.09"
+            # ANSI_COLOR="0;33"
+            # CPE_NAME="cpe:/o:amazon:linux:2016.09:ga"
+            # HOME_URL="http://aws.amazon.com/amazon-linux-ami/"
+            set os_release_found 0
+            foreach path [list os-release release] {
+                try {
+                    open [file join / etc $path] r
+                } on error {} {
+                    # Go on with the check.
+                    continue
+                } on ok { channel } {
+                    set file_content [split [read $channel] "\n"]
+                    close $channel
+
+                    foreach line $file_content {
+                        set line [split $line "="]
+                        switch -nocase -- [lindex $line 0] {
+                            NAME        { set ::OS_NAME       [string trim [lindex $line 1] \"] }
+                            PRETTY_NAME { set ::OS_PRETTYNAME [string trim [lindex $line 1] \"] }
+                            VERSION_ID  -
+                            BUILD_ID    { set ::OS_VERSION    [string trim [lindex $line 1] \"] }
+                        }
+                    }
+
+                    set os_release_found 1
+                    break
+                }
+            }
+
+            # Example 3: Debian    /etc/debian_version
+            #
+            # stretch/sid
+            switch -- $os_release_found {
+                0   {
+                    try {
+                        open [file join / etc debian_version] r
+                    } on error {} {
+                        # Go on with the check.
+                    } on ok { channel } {
+                        set line [split [read $channel] "/"]
+                        close $channel
+
+                        set ::OS_NAME        Debian
+                        set ::OS_VERSION     [lindex $line 0]
+                        set ::OS_PRETTYNAME  [string cat "Debian " $OS_VERSION]
+
+                        set os_release_found 1
+                        break
+                    }
+                }
+            }
+
+            # Example 4: Ubuntu    /etc/lsb-release
+            #
+            # DISTRIB_ID=Ubuntu
+            # DISTRIB_RELEASE=14.04
+            # DISTRIB_CODENAME=trusty
+            # DISTRIB_DESCRIPTION="Ubuntu 14.04 LTS"
+            switch -- $os_release_found {
+                0   {
+                    try {
+                        open [file join / etc lsb-release] r
+                    } on error {} {
+                        # Go on with the check.
+                    } on ok { channel } {
+                        set file_content [split [read $channel] "\n"]
+                        close $channel
+
+                        switch -- [llength $file_content] {
+                            1       {}
+                            default {
+                                foreach line $file_content {
+                                    set line [split $line "="]
+                                    switch -nocase --  [lindex $line 0] {
+                                        DISTRIB_DESCRIPTION { set ::OS_PRETTYNAME [string trim [lindex $line 1] \"] }
+                                        DISTRIB_ID          { set ::OS_NAME       [string trim [lindex $line 1] \"] }
+                                        DISTRIB_RELEASE     { set ::OS_VERSION    [string trim [lindex $line 1] \"] }
+                                    }
+                                }
+                            }
+                        }
+
+                        set os_release_found 1
+                    }
+                }
+            }
+
+            # Example 5: Fedora                /etc/fedora-release
+            #
+            # Fedora release 38 (Thirty Eight)
+            #
+            # Example 6: Scientific Linux      /etc/redhat-release
+            #
+            # Scientific Linux release 7.1 (Nitrogen)
+            switch -- $os_release_found {
+                0   {
+                    foreach path [list fedora-release redhat-release] {
+                        try {
+                            open [file join / etc $path] r
+                        } on error {} {
+                            # Go on with the check.
+                            continue
+                        } on ok { channel } {
+                            set line [read $channel]
+                            close $channel
+
+                            set index [lsearch -exact -nocase $line release]
+                            switch -- $index {
+                                -1  {
+                                    set ::OS_NAME       [lindex $line 0]
+                                    set ::OS_PRETTYNAME $line
+                                    set ::OS_VERSION    [lreplace $line 0 end-2]
+                                }
+                                default {
+                                    set ::OS_NAME       [lreplace $line $index end]
+                                    set ::OS_PRETTYNAME $line
+                                    set ::OS_VERSION    [lreplace $line 0 $index]
+                                }
+                            }
+
+                            set os_release_found 1
+                            break
+                        }
+                    }
+                }
+            }
+
+            # Example 7: Opensuse  /etc/SuSE-release
+            #
+            # openSUSE 13.2 (x86_64)
+            # VERSION = 13.2
+            # CODENAME = Harlequin
+            # # /etc/SuSE-release is deprecated and will be removed in the future, use /etc/os-release instead
+            #
+            # Example 8: SLES      /etc/SuSE-release
+            #
+            # SUSE Linux Enterprise Server 12 (x86_64)
+            # VERSION = 12
+            # PATCHLEVEL = 0
+            # # This file is deprecated and will be removed in a future service pack or release.
+            # # Please check /etc/os-release for details about this release.
+            switch -- $os_release_found {
+                0   {
+                    try {
+                        open [file join / etc SuSE-release] r
+                    } on error {} {
+                        # Go on with the check.
+                    } on ok { channel } {
+                        set file_content [split [read $channel] "\n"]
+                        close $channel
+
+                        foreach line $file_content {
+                            set line [split $line "="]
+                            switch -nocase -- [lindex $line 0] {
+                                SUSE {
+                                    set ::OS_NAME       SUSE
+                                    set ::OS_PRETTYNAME [string trim $line]
+                                }
+                                openSUSE {
+                                    set ::OS_NAME       openSUSE
+                                    set ::OS_PRETTYNAME [string trim $line]
+                                }
+                                VERSION { set ::OS_VERSION [lreplace $line 0 1] }
+                            }
+                        }
+
+                        set os_release_found 1
+                    }
+                }
+            }
+
+            # Example 9: Slackware    /etc/slackware-version
+            #
+            # Slackware 13.37.0
+            switch -- $os_release_found {
+                0   {
+                    try {
+                        open [file join / etc slackware-version] r
+                    } on error {} {
+                        # Go on with the check.
+                    } on ok { channel } {
+                        set line [read $channel]
+                        close $channel
+
+                        set ::OS_NAME       [lindex $line 0]
+                        set ::OS_PRETTYNAME $line
+                        set ::OS_VERSION    [lindex $line 1]
+
+                        break
+                    }
+                }
+            }
+
+            # Example 10: CentoOS      lsb_release -a
+            #
+            # Distributor ID:   CentOS
+            # Description:      CentOS Linux release 7.1.1503 (Core)
+            # Release:          7.1.1503
+            # Codename:         Core
+            switch -- $os_release_found {
+                0   {
+                    try {
+                        exec [auto_execok lsb_release] -a
+                    } on error {} {
+                        # We have done all the checks and came out empty.
+                        set ::OS_NAME       Linux
+                        set ::OS_PRETTYNAME "GNU/Linux"
+                        set ::OS_VERSION    "unknown"
+                    } on ok { results } {
+                        set results [split $results "\n"]
+
+                        foreach line $results {
+                            set line [split $line ":"]
+                            switch -nocase -- [lindex $line 0] {
+                                "Distributor ID" { set ::OS_NAME       [string trim [lindex $line 1] \"] }
+                                "Description"    { set ::OS_PRETTYNAME [string trim [lindex $line 1] \"] }
+                                "Release"        { set ::OS_VERSION    [string trim [lindex $line 1] \"] }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 
 
@@ -864,10 +1562,10 @@ proc ::Jay::init {} {
 
 
     # Unset the variable '::path' because it's no longer needed.
-    # It was defined in the global namespace in order to be used inside the apply command.
+    # It was defined in the global namespace in order to be used with the apply command.
     unset -nocomplain -- ::path
 
-    # From this moment on, Jay is up and running.
+    # From this moment on, Jay is officially up and running.
     set ::TEMP(init,state) done
 }
 
@@ -1511,6 +2209,69 @@ proc ::_CONVERT_MEASURE { measure args } {
     }
 }
 
+
+
+#######################
+## Jay error dialogs ##
+#######################
+
+
+
+## _BG_ERROR
+#
+# Display the background error window.
+#
+# Where:
+#
+# errortext,
+# errorcode     Should be the errortext and errorcode of the event.
+#               They are generally provided by tcl, unless this procedure was triggered directly.
+#
+# flag          Should not be provided, this option is for internal use only.
+#
+# It will close the entire application after the user closes the window.
+proc ::_BG_ERROR { errortext errorcode { flag 1 } } {
+    # The following code have been taken by the bgerror command, and edited for the Jay needs.
+
+    # Note:  On Aqua we cannot display the dialog if the background error occurs in an idle task
+    #        being processed inside of [NSView drawRect]. In that case we post the dialog
+    #        as an after task instead.
+    switch -- [tk windowingsystem] {
+        aqua {
+            switch -- $flag {
+                1   {
+                    after 500 [list ::_BG_ERROR "$errortext" "$errorcode" 0]
+                    return
+                }
+            }
+        }
+    }
+
+    unset -nocomplain -- ::TEMP(response)
+
+    # Check if Jay is fully initialized ('done') or not ('ongoing').
+    switch -- $::TEMP(init,state) {
+        done {
+            # Note:  Jay is allready initialized, we can safely use it's widgets.
+
+            # Note:  To be done.
+            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
+            puts stdout "Errortext: $errortext"
+            puts stdout "Errorcode: $errorcode"
+            exit 2
+        }
+        default {
+            # Note:  Jay is not fully initialized yet, we will use the Tk widgets.
+
+            # Note:  To be done.
+            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
+            puts stdout "Errortext: $errortext"
+            puts stdout "Errorcode: $errorcode"
+            exit 2
+        }
+    }
+}
+
 ## _FATAL_ERROR
 #
 # Display the fatal error window and exits.
@@ -1812,61 +2573,6 @@ proc ::_FATAL_ERROR { message } {
 
             # Exit from the application.
             exit 1
-        }
-    }
-}
-
-## _BG_ERROR
-#
-# Display the background error window.
-#
-# Where:
-#
-# errortext,
-# errorcode     Should be the errortext and errorcode of the event.
-#               They are generally provided by tcl, unless this procedure was triggered directly.
-#
-# flag          Should not be provided, this option is for internal use only.
-#
-# It will close the entire application after the user closes the window.
-proc ::_BG_ERROR { errortext errorcode { flag 1 } } {
-    # The following code have been taken by the bgerror command, and edited for the Jay needs.
-
-    # Note:  On Aqua we cannot display the dialog if the background error occurs in an idle task
-    #        being processed inside of [NSView drawRect]. In that case we post the dialog
-    #        as an after task instead.
-    switch -- [tk windowingsystem] {
-        aqua {
-            switch -- $flag {
-                1   {
-                    after 500 [list ::_BG_ERROR "$errortext" "$errorcode" 0]
-                    return
-                }
-            }
-        }
-    }
-
-    unset -nocomplain -- ::TEMP(response)
-
-    # Check if Jay is fully initialized ('done') or not ('ongoing').
-    switch -- $::TEMP(init,state) {
-        done {
-            # Note:  Jay is allready initialized, we can safely use it's widgets.
-
-            # Note:  To be done.
-            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
-            puts stdout "Errortext: $errortext"
-            puts stdout "Errorcode: $errorcode"
-            exit 2
-        }
-        default {
-            # Note:  Jay is not fully initialized yet, we will use the Tk widgets.
-
-            # Note:  To be done.
-            #        As a fallback the errorcode and errortext provided will be displayed in the standard output channel.
-            puts stdout "Errortext: $errortext"
-            puts stdout "Errorcode: $errorcode"
-            exit 2
         }
     }
 }
