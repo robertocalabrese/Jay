@@ -1532,15 +1532,15 @@ proc ::Jay::init {} {
         }
     }
 
-    # Semi locked variables.
+    # Note: Semi locked variables.
     #
-    # These type of variables are readable and writeable but not deletable.
-    # They are used as bridge between the developer and Jay.
+    #       These type of variables are readable and writeable but not deletable.
+    #       They are used as bridge between the developer and Jay.
     #
-    # Every time the developer sets one of these variables, Jay will check it.
-    # If it's a valid value, Jay will react accordingly to the variable
-    # meaning, if it's not, Jay will do nothing except changing it back
-    # to its previous value (the last valid one).
+    #       Every time the developer sets one of these variables, Jay will check it.
+    #       If it's a valid value, Jay will react accordingly to the variable
+    #       meaning, if it's not, Jay will do nothing except changing it back
+    #       to its previous value (the last valid one).
 
     # Initialize the semi locked table.
     set ::TABLE(semi_locked_variables) [list ]
@@ -1560,17 +1560,59 @@ proc ::Jay::init {} {
     ::_SET_SEMI_LOCKED_VARIABLE ::UI_SCALE_FACTOR
     ::_SET_SEMI_LOCKED_VARIABLE ::UNION
 
+    # Note: Full locked variables.
+    #       These variables are readable but not writable or deletable.
+    #
+    #       Every time the developer sets one of these variables, Jay will
+    #       change it back to its previous value.
 
+    # Initialize the full locked table.
+    set ::TABLE(full_locked_variables) [list ]
 
+    # Set the full locked variables.
+    ::_SET_FULL_LOCKED_VARIABLE ::ADMIN
+    ::_SET_FULL_LOCKED_VARIABLE ::ARCH
+    ::_SET_FULL_LOCKED_VARIABLE ::APP_NAME
+    ::_SET_FULL_LOCKED_VARIABLE ::APP_PRETTYNAME
+    ::_SET_FULL_LOCKED_VARIABLE ::APP_VERSION
+    ::_SET_FULL_LOCKED_VARIABLE ::BUILDED_AS
+    ::_SET_FULL_LOCKED_VARIABLE ::CACHE_DIR
+    ::_SET_FULL_LOCKED_VARIABLE ::CPU_CORES
+    ::_SET_FULL_LOCKED_VARIABLE ::CPU_MODEL
+    ::_SET_FULL_LOCKED_VARIABLE ::CPU_THREADS
+    ::_SET_FULL_LOCKED_VARIABLE ::CONFIG_DIR
+    ::_SET_FULL_LOCKED_VARIABLE ::CURSORS
+    ::_SET_FULL_LOCKED_VARIABLE ::DATA_DIR
+    ::_SET_FULL_LOCKED_VARIABLE ::HOME_DIR
+    ::_SET_FULL_LOCKED_VARIABLE ::JAY_DIR
+    ::_SET_FULL_LOCKED_VARIABLE ::JAY_PREFERENCE_FILE
+    ::_SET_FULL_LOCKED_VARIABLE ::JAY_VERSION
+    ::_SET_FULL_LOCKED_VARIABLE ::LANGUAGES
+    ::_SET_FULL_LOCKED_VARIABLE ::OS_NAME
+    ::_SET_FULL_LOCKED_VARIABLE ::OS_PRETTYNAME
+    ::_SET_FULL_LOCKED_VARIABLE ::OS_VERSION
+    ::_SET_FULL_LOCKED_VARIABLE ::PALETTES
+    ::_SET_FULL_LOCKED_VARIABLE ::SCREEN_PPI
+    ::_SET_FULL_LOCKED_VARIABLE ::SYSTEM_COLORNAMES
+    ::_SET_FULL_LOCKED_VARIABLE ::THEMES
 
-
-
-
-
-
-
-
-
+    switch -- [tk windowingsystem] {
+        aqua {
+            ::_SET_FULL_LOCKED_VARIABLE ::KERNEL_VERSION
+            ::_SET_FULL_LOCKED_VARIABLE ::UID
+        }
+        win32 {
+            ::_SET_FULL_LOCKED_VARIABLE ::WIN_DIR
+            ::_SET_FULL_LOCKED_VARIABLE ::WIN_DISK
+        }
+        default {
+            ::_SET_FULL_LOCKED_VARIABLE ::DE_WM
+            ::_SET_FULL_LOCKED_VARIABLE ::GLIB_VERSION
+            ::_SET_FULL_LOCKED_VARIABLE ::KERNEL_VERSION
+            ::_SET_FULL_LOCKED_VARIABLE ::PKG_MANAGER
+            ::_SET_FULL_LOCKED_VARIABLE ::UID
+        }
+    }
 
     # Unset the variable '::path' because it's no longer needed.
     # It was defined in the global namespace in order to be used with the apply command.
@@ -2222,6 +2264,8 @@ proc ::_CONVERT_MEASURE { measure args } {
 
 
 
+
+
 #######################
 ## Jay error dialogs ##
 #######################
@@ -2271,7 +2315,7 @@ proc ::_BG_ERROR { errortext errorcode { flag 1 } } {
             puts stdout "Errorcode: $errorcode"
             exit 2
         }
-        default {
+        ongoing {
             # Note:  Jay is not fully initialized yet, we will use the Tk widgets.
 
             # Note:  To be done.
@@ -2335,7 +2379,7 @@ proc ::_FATAL_ERROR { message } {
             puts stdout "Error: [lindex $message 0]"
             exit 1
         }
-        default {
+        ongoing {
             # Note:  Jay is not fully initialized yet, we will fallback to use the Tk widgets.
 
             # Set the light colorscheme.
