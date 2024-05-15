@@ -1532,6 +1532,162 @@ proc ::Jay::init {} {
         }
     }
 
+    # Load the Jay preference file, if any.
+    try {
+        open $::JAY_PREFERENCE_FILE r
+    } on error { errortext errorcode } {
+        try {
+            open $::JAY_PREFERENCE_FILE w
+        } on error { errortext errorcode } {
+            # Display the notification on the standard output channel.
+            puts stdout $errortext
+
+            # If the notifications are enabled, display the notification dialog as well.
+            switch -- $::NOTIFICATIONS {
+                enabled { ::_NOTIFY $errortext }
+            }
+        } on ok { channel } {
+            switch -- $::UNION {
+                " " { set union space }
+                "-" { set union "-" }
+                "+" { set union "+" }
+            }
+
+            set maxLength 15
+            set gap       3
+
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN ACCENT_COLOR:    $maxLength $gap]$::ACCENT_COLOR"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN CIE:             $maxLength $gap]$::CIE"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN COLORSCHEME:     $maxLength $gap]$::COLORSCHEME"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN DEBUG:           $maxLength $gap]$::DEBUG"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN DEPTH:           $maxLength $gap]$::DEPTH"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN FOLLOWMOUSE:     $maxLength $gap]$::FOLLOWMOUSE"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN LANGUAGE:        $maxLength $gap]$::LANGUAGE"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN NOTIFICATIONS:   $maxLength $gap]$::NOTIFICATIONS"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN POPUPS:          $maxLength $gap]$::POPUPS"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN SCROLLSPEED:     $maxLength $gap]$::SCROLLSPEED"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN THEME:           $maxLength $gap]$::THEME"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN UI_SCALE_FACTOR: $maxLength $gap]$::UI_SCALE_FACTOR"
+            puts  $channel "[::_ALIGN_STRING_TO_COLUMN UNION:           $maxLength $gap]$union"
+            flush $channel
+            close $channel
+        }
+    } on ok { channel } {
+        set file_content [split [read $channel] "\n"]
+        close $channel
+
+        foreach line $file_content {
+            set option [lindex   $line 0]
+            set value  [lreplace $line 0 0]
+            switch -nocase -- $option {
+                "ACCENT_COLOR:" {
+                    set value [string tolower $value]
+                    if { $value in $::THEME(accent,colors) } {
+                        set ::ACCENT_COLOR $value
+                    }
+                }
+                "CIE:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        intent   -
+                        standard { set ::CIE $value }
+                    }
+                }
+                "COLORSCHEME:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        dark  -
+                        light { set ::COLORSCHEME $value }
+                    }
+                }
+                "DEBUG:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        disabled -
+                        enabled  { set ::DEBUG $value }
+                    }
+                }
+                "DEPTH:" {
+                    switch -- $::value {
+                        8   -
+                        12  -
+                        16  { set ::DEBUG $value }
+                    }
+                }
+                "FOLLOWMOUSE:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        disabled -
+                        enabled  { set ::FOLLOWMOUSE $value }
+                    }
+                }
+                "LANGUAGE:" {
+                    set value [string tolower $value]
+                    if { $value in $::LANGUAGES } {
+                        set ::LANGUAGE $value
+                    }
+                }
+                "NOTIFICATIONS:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        disabled -
+                        enabled  { set ::NOTIFICATIONS $value }
+                    }
+                }
+                "POPUPS:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        disabled -
+                        enabled  { set ::POPUPS $value }
+                    }
+                }
+                "SCROLLSPEED:" {
+                    set value [string trimright $value "%"]
+                    switch -- [string is double $value] {
+                        1   {
+                            if { $value < 1.0 } {
+                                set ::SCROLLSPEED 1.0
+                            } elseif { $value > 300.0 } {
+                                set ::SCROLLSPEED 300.0
+                            } else {
+                                set ::SCROLLSPEED $value
+                            }
+                        }
+                    }
+                }
+                "THEME:" {
+                    set value [string tolower $value]
+                    if { $value in $::THEMES } {
+                        set ::THEME $value
+                    }
+                }
+                "UI_SCALE_FACTOR:" {
+                    set value [string trimright $value "%"]
+                    switch -- [string is double $value] {
+                        1   {
+                            if { $value < 75.0 } {
+                                set ::UI_SCALE_FACTOR 75.0
+                            } elseif { $value > 300.0 } {
+                                set ::UI_SCALE_FACTOR 300.0
+                            } else {
+                                set ::UI_SCALE_FACTOR $value
+                            }
+                        }
+                    }
+                }
+                "UNION:" {
+                    set value [string tolower $value]
+                    switch -- $value {
+                        "+"     -
+                        "-"     { set ::UNION $value }
+                        " "     -
+                        "space" { set ::UNION " " }
+                    }
+                }
+            }
+        }
+    }
+
     # Note: Semi locked variables.
     #
     #       These type of variables are readable and writeable but not deletable.
