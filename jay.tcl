@@ -154,6 +154,8 @@ proc ::Jay::init {} {
     # Hide the initial toplevel created by Tk.
     wm withdraw .
 
+    # ::ACCENT_COLOR
+    #
     # It's a string that specifies the accent color in use.
     #
     # ['blue', 'cyan', 'green', 'orange', 'purple', 'red', 'yellow' or 'custom']
@@ -169,35 +171,35 @@ proc ::Jay::init {} {
         4   { set ::ARCH "32 bit" }
     }
 
-    # CIE
+    # ::CIE
     #
     # It's a string that specifies the actual CIE standards in use.
     #
     # ['standard' or 'intent']
     set ::CIE "standard"
 
-    # COLORSCHEME
+    # ::COLORSCHEME
     #
     # It's a string that specifies the colorscheme in use.
     #
     # ['light' or 'dark']
     set ::COLORSCHEME "light"
 
-    # DEBUG
+    # ::DEBUG
     #
     # It's a boolean that specifies the debug state.
     #
     # ['enabled' or 'disabled']
     set ::DEBUG "disabled"
 
-    # DEPTH
+    # ::DEPTH
     #
     # It's an integer that specifies the color depth in use.
     #
     # ['8', '12' or '16']
     set ::DEPTH 8
 
-    # FOLLOWMOUSE
+    # ::FOLLOWMOUSE
     #
     # It's a boolean that specifies if the focus must follow the pointer or not.
     #
@@ -226,7 +228,7 @@ proc ::Jay::init {} {
     }
     ::msgcat::mcload [file join $::JAY_DIR msgs]
 
-    # LANGUAGE
+    # ::LANGUAGE
     #
     # It's a string that specifies the language in use.
     # It must follow the 'ISO 639-1' specifications.
@@ -1530,6 +1532,33 @@ proc ::Jay::init {} {
         }
     }
 
+    # Semi locked variables.
+    #
+    # These type of variables are readable and writeable but not deletable.
+    # They are used as bridge between the developer and Jay.
+    #
+    # Every time the developer sets one of these variables, Jay will check it.
+    # If it's a valid value, Jay will react accordingly to the variable
+    # meaning, if it's not, Jay will do nothing except changing it back
+    # to its previous value (the last valid one).
+
+    # Initialize the semi locked table.
+    set ::TABLE(semi_locked_variables) [list ]
+
+    # Set the semi locked variables.
+    ::_SET_SEMI_LOCKED_VARIABLE ::ACCENT_COLOR
+    ::_SET_SEMI_LOCKED_VARIABLE ::CIE
+    ::_SET_SEMI_LOCKED_VARIABLE ::COLORSCHEME
+    ::_SET_SEMI_LOCKED_VARIABLE ::DEBUG
+    ::_SET_SEMI_LOCKED_VARIABLE ::DEPTH
+    ::_SET_SEMI_LOCKED_VARIABLE ::FOLLOWMOUSE
+    ::_SET_SEMI_LOCKED_VARIABLE ::LANGUAGE
+    ::_SET_SEMI_LOCKED_VARIABLE ::NOTIFICATIONS
+    ::_SET_SEMI_LOCKED_VARIABLE ::POPUPS
+    ::_SET_SEMI_LOCKED_VARIABLE ::SCROLLSPEED
+    ::_SET_SEMI_LOCKED_VARIABLE ::THEME
+    ::_SET_SEMI_LOCKED_VARIABLE ::UI_SCALE_FACTOR
+    ::_SET_SEMI_LOCKED_VARIABLE ::UNION
 
 
 
