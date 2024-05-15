@@ -913,11 +913,7 @@ proc ::Jay::init {} {
             set kernel [lindex [split $::tcl_platform(osVersion) -] 0]
             switch -- [package vcompare 6.1.0 $kernel] {
                 -1      { set ::KERNEL_VERSION $kernel }
-                default {
-                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'."
-
-                    exit 1
-                }
+                default { ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'." }
             }
 
             # ::UID
@@ -929,8 +925,6 @@ proc ::Jay::init {} {
                 exec [auto_execok id] {*}$id_options
             } on error {} {
                 ::_FATAL_ERROR "Error while executing the 'id' command."
-
-                exit 1
             } on ok { result } {
                 set ::UID $result
             }
@@ -1043,11 +1037,7 @@ proc ::Jay::init {} {
 
             # Check the minimum Microsoft Windows version allowed.
             switch -- [::twapi::min_os_version [list 10 0 0 0]] {
-                0   {
-                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least 'Microsoft Windows 10 build number 17063'."
-
-                    exit 1
-                }
+                0   { ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least 'Microsoft Windows 10 build number 17063'." }
             }
 
             # ::ADMIN
@@ -1089,8 +1079,6 @@ proc ::Jay::init {} {
 
                 if { ($major < 11) && ($buildNumber < 17063) } {
                     ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least 'Microsoft Windows 10 build number 17063'."
-
-                    exit 1
                 }
 
                 set ::OS_PRETTYNAME [list $::OS_NAME "$major.$minor" "build number" $buildNumber]
@@ -1139,11 +1127,7 @@ proc ::Jay::init {} {
             set kernel [lindex [split $::tcl_platform(osVersion) -] 0]
             switch -- [package vcompare 6.1.0 $kernel] {
                 -1      { set ::KERNEL_VERSION $kernel }
-                default {
-                    ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'."
-
-                    exit 1
-                }
+                default { ::_FATAL_ERROR "$::APP_PRETTYNAME requires at least kernel version '6.1.0'." }
             }
 
             # ::UID
@@ -1157,8 +1141,6 @@ proc ::Jay::init {} {
                         exec [auto_execok id] {*}$id_options
                     } on error {} {
                         ::_FATAL_ERROR "Error while executing the 'id' command."
-
-                        exit 1
                     } on ok { result } {
                         set ::UID $result
                     }
