@@ -2418,6 +2418,45 @@ proc ::_CONVERT_MEASURE { measure args } {
     }
 }
 
+# _LOAD_PREFERENCES
+#
+# Loads the user preference from the Jay configuration file.
+#
+# Returns 'fail' or 'success'.
+proc ::_LOAD_PREFERENCES {} {
+    # Load the Jay preference file, if any.
+    try {
+        open $::JAY_PREFERENCE_FILE r
+    } on error { errortext errorcode } {
+        return "fail"
+    } on ok { channel } {
+        set file_content [split [read $channel] "\n"]
+        close $channel
+
+        foreach line $file_content {
+            set option [lindex   $line 0]
+            set value  [lreplace $line 0 0]
+            switch -nocase -- $option {
+                "ACCENT_COLOR:"    { set ::ACCENT_COLOR    $value }
+                "CIE:"             { set ::CIE             $value }
+                "COLORSCHEME:"     { set ::COLORSCHEME     $value }
+                "DEBUG:"           { set ::DEBUG           $value }
+                "DEPTH:"           { set ::DEPTH           $value }
+                "FOLLOWMOUSE:"     { set ::FOLLOWMOUSE     $value }
+                "LANGUAGE:"        { set ::LANGUAGE        $value }
+                "NOTIFICATIONS:"   { set ::NOTIFICATIONS   $value }
+                "POPUPS:"          { set ::POPUPS          $value }
+                "SCROLLSPEED:"     { set ::SCROLLSPEED     $value }
+                "THEME:"           { set ::THEME           $value }
+                "UI_SCALE_FACTOR:" { set ::UI_SCALE_FACTOR $value }
+                "UNION:"           { set ::UNION           $value }
+            }
+        }
+
+        return "success"
+    }
+}
+
 
 
 
