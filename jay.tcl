@@ -2457,6 +2457,46 @@ proc ::_LOAD_PREFERENCES {} {
     }
 }
 
+# _SAVE_PREFERENCES
+#
+# Saves the user preferences into the Jay configuration file.
+#
+# Returns 'fail' or 'success'.
+proc ::_SAVE_PREFERENCES {} {
+    try {
+        open $::JAY_PREFERENCE_FILE w
+    } on error { errortext errorcode } {
+        return "fail"
+    } on ok { channel } {
+        switch -- $::UNION {
+            " " { set union space }
+            "-" { set union "-" }
+            "+" { set union "+" }
+        }
+
+        set maxLength 15
+        set gap       3
+
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN ACCENT_COLOR:    $maxLength $gap]$::ACCENT_COLOR"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN CIE:             $maxLength $gap]$::CIE"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN COLORSCHEME:     $maxLength $gap]$::COLORSCHEME"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN DEBUG:           $maxLength $gap]$::DEBUG"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN DEPTH:           $maxLength $gap]$::DEPTH"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN FOLLOWMOUSE:     $maxLength $gap]$::FOLLOWMOUSE"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN LANGUAGE:        $maxLength $gap]$::LANGUAGE"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN NOTIFICATIONS:   $maxLength $gap]$::NOTIFICATIONS"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN POPUPS:          $maxLength $gap]$::POPUPS"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN SCROLLSPEED:     $maxLength $gap]$::SCROLLSPEED"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN THEME:           $maxLength $gap]$::THEME"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN UI_SCALE_FACTOR: $maxLength $gap]$::UI_SCALE_FACTOR"
+        puts  $channel "[::_ALIGN_STRING_TO_COLUMN UNION:           $maxLength $gap]$union"
+        flush $channel
+        close $channel
+
+        return "success"
+    }
+}
+
 
 
 
